@@ -20,10 +20,12 @@ mongoose.connect(process.env.MONGO_URL)
 const signup = require('./routes/signup');
 const logout = require('./routes/logout');
 const login = require('./routes/login');
+const sendEmail = require('./routes/sendEmail');
 
 app.use('/', signup);
 app.use('/', logout);
 app.use('/', login);
+app.use('/sendotp', sendEmail);
 
 app.get('/', (req, res) => {
     res.send("home page");
