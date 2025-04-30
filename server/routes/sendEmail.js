@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const {Resend} = require('resend');
-const resend = new Resend("re_CLuQLXyL_29ngJU4XPKz1gwH5kHWydEpy");
+require('dotenv').config();
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 router.post('/:email',async (req, res) => {
     const {email} = req.params;
