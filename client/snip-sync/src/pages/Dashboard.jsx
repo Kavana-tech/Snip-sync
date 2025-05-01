@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import {Link} from 'react-router-dom';
 
 // Sample snippet data for demonstration
 const initialSnippets = [
@@ -25,7 +26,7 @@ const Dashboard = () => {
     setSnippets(snippets.filter(snippet => snippet.id !== id));
   };
 
-  // Handle editing a snippet (you can extend this as a modal or inline editor)
+  // Handle editing a snippet (we can extend this as a modal or inline editor)
   const handleEditSnippet = (id) => {
     const snippet = snippets.find(snippet => snippet.id === id);
     if (snippet) {
@@ -42,7 +43,7 @@ const Dashboard = () => {
         <ul className="mt-8">
           <li><a href="#" className="block py-2 px-4 hover:bg-gray-700">Dashboard</a></li>
           <li><a href="#" className="block py-2 px-4 hover:bg-gray-700">My Projects</a></li>
-          <li><a href="#" className="block py-2 px-4 hover:bg-gray-700">Profile</a></li>
+          <li><Link to="/Profile" className="block py-2 px-4 hover:bg-gray-700">Profile</Link></li>
           <li><a href="#" className="block py-2 px-4 hover:bg-gray-700">Teams</a></li>
           <li><a href="#" className="block py-2 px-4 hover:bg-gray-700">Settings</a></li>
           <li><a href="#" className="block py-2 px-4 hover:bg-gray-700">Logout</a></li>
