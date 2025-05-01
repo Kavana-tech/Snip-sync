@@ -6,6 +6,7 @@ import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
 import AddTeam from "./pages/AddTeam";
 import MyProject from "./components/MyProjects";
+import Profile from "./pages/Profile";
 function App() {
   return (
     <BrowserRouter>
@@ -16,6 +17,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />}></Route>
         <Route path="/addteam" element={<AddTeam />}></Route>
         <Route path="/myprojects" element={<MyProject />}></Route>
+        <Route path="/profile" element={<Profile />}></Route>
 
       </Routes>
     </BrowserRouter>
