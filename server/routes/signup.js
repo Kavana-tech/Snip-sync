@@ -12,16 +12,25 @@ router.post('/signup', async (req, res) => {
         const { email, password } = req.body;
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
-        const newUser = new user({ email, password: hash });
-        const createdUser = await newUser.save();
-        let token = jwt.sign({email}, "gatfghrf");
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: false, 
-            sameSite: 'Lax'  
-        });
-        console.log(token);
-        res.status(200).json({createdUser, message:"Signed up Successfully"});
+        const userFound = await user.findOne({email});
+        if(!userFound)
+        {
+            const newUser = new user({ email, password: hash });
+            const createdUser = await newUser.save();
+            let token = jwt.sign({email}, "gatfghrf");
+            res.cookie("token", token, {
+                httpOnly: true,
+                secure: false, 
+                sameSite: 'Lax'  
+            });
+            console.log(token);
+            res.status(200).json({createdUser, message:"Signed up Successfully"});
+        }
+        else
+        {
+            res.status(404).json({message:"User already Exits!"});
+        }
+        
     } catch (error) {
         console.log(error);
         console.log("Error while signing up!");

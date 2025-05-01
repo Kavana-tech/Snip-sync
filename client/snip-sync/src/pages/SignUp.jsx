@@ -11,8 +11,6 @@ function SignUp() {
   const [isVerified, setIsVerified] = useState(false);
   const [verifyOtp, setVerifyOtp] = useState(false);
 
-  // const enteredOtp = document.getElementById('otp');
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
@@ -43,22 +41,31 @@ function SignUp() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleOtp =async () => {
-    const response = await axios.post(`http://localhost:8000/sendotp/${formData.email}`);
-    console.log(response);
-    if(response.status === 200)
-    {
-      toast.success(response.data.message);
-      setVerifyOtp(true);
-      setOtp(response.data.otp);
+  const handleOtp = async () => {
+    try {
+      const response = await axios.post(`http://localhost:8000/sendotp/${formData.email}`);
+      console.log(response);
+      if (response.status === 200) {
+        toast.success(response.data.message);
+        setVerifyOtp(true);
+        setOtp(response.data.otp);
+      }
+      else {
+        toast.error(response.data.message);
+      }
     }
+    catch(error)
+    {
+      console.log(error);
+      toast.error(error.response.data.message);
+    }
+    
   }
 
-  const handleOtpVerification = () =>{
+  const handleOtpVerification = () => {
     console.log(enteredOtp);
     console.log(otp);
-    if(enteredOtp === otp.toString())
-    {
+    if (enteredOtp === otp.toString()) {
       toast.success("OTP verified Successfully!");
       setIsVerified(true);
     }
@@ -92,7 +99,7 @@ function SignUp() {
             />
             <button
               className="bg-blue-600 cursor-pointer text-white py-2 rounded hover:bg-blue-700 transition-all duration-200"
-              type='button' 
+              type='button'
               onClick={handleOtp}
             >
               Verify Your Email
@@ -101,23 +108,23 @@ function SignUp() {
             {verifyOtp && <input
               type="text"
               name="otp"
-              onChange={(e)=> setEnteredOtp(e.target.value)}
+              onChange={(e) => setEnteredOtp(e.target.value)}
               placeholder="Enter OTP"
               className="p-2 mb-4 mt-4 border rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />}
 
             {verifyOtp && <button
-            type='button' 
+              type='button'
               className="bg-blue-600 cursor-pointer text-white py-2 rounded hover:bg-blue-700 transition-all duration-200"
               onClick={handleOtpVerification}
             >
               Verify OTP
             </button>}
-            
+
 
             {isVerified && <button
-              type="submit" 
+              type="submit"
               className="bg-blue-600 mt-2 cursor-pointer text-white py-2 rounded hover:bg-blue-700 transition-all duration-200"
             >
               Sign Up
