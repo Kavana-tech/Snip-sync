@@ -5,7 +5,7 @@ import toast, { Toaster } from 'react-hot-toast';
 
 function SignUp() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [formData, setFormData] = useState({ username: '', email: '', password: '' });
   const [otp, setOtp] = useState('');
   const [enteredOtp, setEnteredOtp] = useState('');
   const [isVerified, setIsVerified] = useState(false);
@@ -13,27 +13,17 @@ function SignUp() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
     try {
-      let response = await axios.post("http://localhost:8000/signup", formData, { withCredentials: true });
-      console.log(response);
+      const response = await axios.post("http://localhost:8000/signup", formData, { withCredentials: true });
       if (response.status === 200) {
         toast.success(response.data.message);
-        setFormData({
-          email: "",
-          password: "",
-        })
-        setTimeout(() => {
-          navigate('/login');
-        }, 2000);
-      }
-      else {
+        setFormData({ username: '', email: '', password: '' });
+        setTimeout(() => navigate('/login'), 2000);
+      } else {
         toast.error(response.data.message);
       }
-    }
-    catch (error) {
-      console.log(error);
-      toast.error(error.response.data.message);
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Signup failed.");
     }
   };
 
@@ -68,42 +58,67 @@ function SignUp() {
     if (enteredOtp === otp.toString()) {
       toast.success("OTP verified Successfully!");
       setIsVerified(true);
+    } else {
+      toast.error("Incorrect OTP");
     }
-  }
-
+  };
 
   return (
-    <div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
       <Toaster />
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-800 to-gray-900 text-white font-sans">
-        <div className="bg-gray-900 p-8 rounded-lg shadow-md w-80">
-          <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
-          <form onSubmit={handleSubmit} className="flex flex-col">
+      <div className="bg-gray-800 p-10 rounded-xl shadow-lg w-full max-w-md">
+        <h2 className="text-3xl font-bold mb-6 text-center">Create your account</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-semibold mb-1">Username</label>
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              placeholder="Choose a username"
+              className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold mb-1">Email address</label>
             <input
               type="email"
               name="email"
-              placeholder="Email"
               value={formData.email}
               onChange={handleChange}
-              className="p-2 mb-4 border rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+              placeholder="Enter your email"
+              className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold mb-1">Password</label>
             <input
               type="password"
               name="password"
-              placeholder="Password"
               value={formData.password}
               onChange={handleChange}
-              className="p-2 mb-4 border rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+              placeholder="Create a password"
+              className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
+            <p className="text-xs text-gray-400 mt-1">At least 6 characters</p>
+          </div>
+
+          <div className="flex justify-between mt-4">
             <button
               className="bg-blue-600 cursor-pointer text-white py-2 rounded hover:bg-blue-700 transition-all duration-200"
               type='button'
               onClick={handleOtp}
+              className="text-sm text-blue-400 hover:underline"
             >
-              Verify Your Email
+              Send OTP to Email
             </button>
+          </div>
 
             {verifyOtp && <input
               type="text"
@@ -128,21 +143,20 @@ function SignUp() {
               className="bg-blue-600 mt-2 cursor-pointer text-white py-2 rounded hover:bg-blue-700 transition-all duration-200"
             >
               Sign Up
-            </button>}
-          </form>
-          <p className="mt-4 text-center text-sm text-white">
-            Already have an account?&nbsp;
-            <span
-              className="text-blue-600 cursor-pointer hover:underline"
-              onClick={() => navigate('/login')}
-            >
-              Login
-            </span>
-          </p>
-        </div>
+            </button>
+          )}
+        </form>
+        <p className="text-sm text-center mt-6">
+          Already have an account?{' '}
+          <span
+            className="text-blue-400 hover:underline cursor-pointer"
+            onClick={() => navigate('/login')}
+          >
+            Login here
+          </span>
+        </p>
       </div>
     </div>
-
   );
 }
 
