@@ -1,130 +1,55 @@
-import React, { useState } from 'react';
-import {Link} from 'react-router-dom';
 
-// Sample snippet data for demonstration
-const initialSnippets = [
-  { id: 1, title: "Snippet 1", code: "const hello = 'world';" },
-  { id: 2, title: "Snippet 2", code: "let name = 'John';" },
-];
+import React from 'react';
+import { Link } from 'react-router-dom';
 
-const Dashboard = () => {
-  // State to store snippets
-  const [snippets, setSnippets] = useState(initialSnippets);
-  const [newSnippet, setNewSnippet] = useState({ title: '', code: '' });
-
-  // Handle adding a new snippet
-  const handleAddSnippet = () => {
-    if (newSnippet.title && newSnippet.code) {
-      const newId = snippets.length + 1;
-      setSnippets([...snippets, { ...newSnippet, id: newId }]);
-      setNewSnippet({ title: '', code: '' }); // Reset form
-    }
-  };
-
-  // Handle deleting a snippet
-  const handleDeleteSnippet = (id) => {
-    setSnippets(snippets.filter(snippet => snippet.id !== id));
-  };
-
-  // Handle editing a snippet (we can extend this as a modal or inline editor)
-  const handleEditSnippet = (id) => {
-    const snippet = snippets.find(snippet => snippet.id === id);
-    if (snippet) {
-      setNewSnippet({ title: snippet.title, code: snippet.code });
-      handleDeleteSnippet(id); // Delete the snippet for now (simulate edit)
-    }
-  };
-
+function Dashboard() {
   return (
-    <div className="flex h-screen">
-      {/* Sidebar */}
-      <div className="w-64 bg-gray-800 text-white p-4">
-        <div className="text-center text-xl font-semibold">SnipSync</div>
-        <ul className="mt-8">
-          <li><a href="#" className="block py-2 px-4 hover:bg-gray-700">Dashboard</a></li>
-          <li><a href="#" className="block py-2 px-4 hover:bg-gray-700">My Projects</a></li>
-          <li><Link to="/Profile" className="block py-2 px-4 hover:bg-gray-700">Profile</Link></li>
-          <li><a href="#" className="block py-2 px-4 hover:bg-gray-700">Teams</a></li>
-          <li><a href="#" className="block py-2 px-4 hover:bg-gray-700">Settings</a></li>
-          <li><a href="#" className="block py-2 px-4 hover:bg-gray-700">Logout</a></li>
-        </ul>
-      </div>
+    <div className="min-h-screen flex bg-gray-100 font-sans">
+      <aside className="w-64 bg-blue-900 text-white flex flex-col p-4 space-y-6">
+        <h1 className="text-2xl font-bold mb-6">SnipSync</h1>
+        <nav className="flex flex-col space-y-4">
+          <Link to="/snippets" className="hover:text-cyan-300">My Snippets</Link>
+          <Link to="/profile" className="hover:text-cyan-300">Profile</Link>
+          <Link to="/settings" className="hover:text-cyan-300">Settings</Link>
+          <Link to="/logout" className="text-red-400 hover:text-red-600">Logout</Link>
+        </nav>
+      </aside>
 
-      {/* Main content area */}
-      <div className="flex-1 bg-white p-6">
-        {/* Top bar */}
-        <div className="flex justify-between items-center mb-4">
-          <div className="text-2xl font-semibold text-gray-800">Welcome, User</div>
-          <div className="flex items-center space-x-4">
+     
+      <main className="flex-1 p-8">
+        <h2 className="text-3xl font-bold mb-6 text-blue-900">Welcome to Your Dashboard</h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white shadow-md p-6 rounded-lg">
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">Total Snippets</h3>
+            <p className="text-2xl font-bold text-blue-600">24</p>
+          </div>
+          <div className="bg-white shadow-md p-6 rounded-lg">
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">Collaborations</h3>
+            <p className="text-2xl font-bold text-blue-600">8</p>
+          </div>
+          <div className="bg-white shadow-md p-6 rounded-lg">
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">Favorites</h3>
+            <p className="text-2xl font-bold text-blue-600">5</p>
           </div>
         </div>
 
-        {/* Snippets Section */}
-        <div className="mb-6">
-          <div className="flex justify-between items-center">
-            <h3 className="text-xl font-semibold text-gray-800">Your Snippets</h3>
-            <button
-              onClick={() => handleAddSnippet()}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-            >
-              Add Snippet
-            </button>
-          </div>
-
-          {/* Snippet Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6">
-            {snippets.map((snippet) => (
-              <div key={snippet.id} className="bg-white p-4 rounded-lg shadow-md">
-                <div className="text-lg font-semibold mb-2">{snippet.title}</div>
-                <pre className="text-sm text-gray-700 bg-gray-100 p-2 rounded-lg">
-                  {snippet.code}
-                </pre>
-                <div className="mt-4 flex justify-between">
-                  <button
-                    onClick={() => handleEditSnippet(snippet.id)}
-                    className="text-blue-600 hover:underline"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDeleteSnippet(snippet.id)}
-                    className="text-red-600 hover:underline"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+        <div className="mt-10">
+          <h3 className="text-2xl font-bold mb-4 text-blue-900">Recent Snippets</h3>
+          <ul className="space-y-4">
+            <li className="bg-white p-4 rounded shadow-md">
+              <h4 className="font-bold">React Login Form</h4>
+              <p className="text-gray-600 text-sm">Last updated 1 hour ago</p>
+            </li>
+            <li className="bg-white p-4 rounded shadow-md">
+              <h4 className="font-bold">Python API Fetch</h4>
+              <p className="text-gray-600 text-sm">Last updated yesterday</p>
+            </li>
+          </ul>
         </div>
-
-        {/* New Snippet Form */}
-        <div className="mt-6 bg-white p-4 rounded-lg shadow-md">
-          <h3 className="text-xl font-semibold mb-4">Add a New Snippet</h3>
-          <input
-            type="text"
-            placeholder="Title"
-            value={newSnippet.title}
-            onChange={(e) => setNewSnippet({ ...newSnippet, title: e.target.value })}
-            className="p-2 mb-4 w-full border rounded bg-gray-100"
-          />
-          <textarea
-            placeholder="Code"
-            value={newSnippet.code}
-            onChange={(e) => setNewSnippet({ ...newSnippet, code: e.target.value })}
-            className="p-2 mb-4 w-full border rounded bg-gray-100"
-            rows="6"
-          ></textarea>
-          <button
-            onClick={handleAddSnippet}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
-          >
-            Save Snippet
-          </button>
-        </div>
-      </div>
+      </main>
     </div>
   );
-};
+}
 
 export default Dashboard;
