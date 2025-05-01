@@ -114,7 +114,6 @@ function SignUp() {
               className="bg-blue-600 cursor-pointer text-white py-2 rounded hover:bg-blue-700 transition-all duration-200"
               type='button'
               onClick={handleOtp}
-              className="text-sm text-blue-400 hover:underline"
             >
               Send OTP to Email
             </button>
@@ -144,7 +143,7 @@ function SignUp() {
             >
               Sign Up
             </button>
-          )}
+          }
         </form>
         <p className="text-sm text-center mt-6">
           Already have an account?{' '}
