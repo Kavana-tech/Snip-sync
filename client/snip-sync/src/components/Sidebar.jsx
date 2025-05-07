@@ -25,7 +25,7 @@ function Sidebar() {
                 <li><Link to={'/myprojects'} className="block py-2 px-4 hover:bg-gray-700 hover:text-cyan-400">My Projects</Link></li>
                 <li><Link to="/Profile" className="block py-2 px-4 hover:bg-gray-700 hover:text-cyan-400">Profile</Link></li>
                 <li><Link to={'/'} className="block py-2 px-4 hover:bg-gray-700 hover:text-cyan-400">Teams</Link></li>
-                <li><Link to={'/'} className="block py-2 px-4 hover:bg-gray-700 hover:text-cyan-400">Settings</Link></li>
+                <li><Link to={'/settings'} className="block py-2 px-4 hover:bg-gray-700 hover:text-cyan-400">Settings</Link></li>
                 <li><button className="block py-2 px-4 hover:bg-gray-700 hover:text-cyan-400" onClick={handleLogout}>Logout</button></li>
             </ul>
         </div>

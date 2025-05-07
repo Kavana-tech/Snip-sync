@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import MyProject from "./components/MyProjects";
 import Profile from "./pages/Profile";
 import InvitationRedirect from "./pages/InvitationRedirect";
+import Settings from "./pages/Settings";
 function App() {
   return (
     <BrowserRouter>
@@ -19,7 +20,7 @@ function App() {
         <Route path="/myprojects" element={<MyProject />}></Route>
         <Route path="/profile" element={<Profile />}></Route>
         <Route path="/invite" element={<InvitationRedirect />}></Route>
-
+        <Route path="/settings" element={<Settings />}></Route>
       </Routes>
     </BrowserRouter>
   );

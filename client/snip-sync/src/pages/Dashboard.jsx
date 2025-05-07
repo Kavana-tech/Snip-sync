@@ -105,7 +105,7 @@ const Dashboard = () => {
             Save Snippet
           </button>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
