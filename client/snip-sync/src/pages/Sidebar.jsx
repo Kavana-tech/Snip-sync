@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {Link} from 'react-router-dom';
-import Sidebar from '../components/Sidebar';
 
 const initialSnippets = [
   { id: 1, title: "Snippet 1", code: "const hello = 'world';" },
@@ -8,21 +7,25 @@ const initialSnippets = [
 ];
 
 const Dashboard = () => {
+
   const [snippets, setSnippets] = useState(initialSnippets);
   const [newSnippet, setNewSnippet] = useState({ title: '', code: '' });
 
+ 
   const handleAddSnippet = () => {
     if (newSnippet.title && newSnippet.code) {
       const newId = snippets.length + 1;
       setSnippets([...snippets, { ...newSnippet, id: newId }]);
-      setNewSnippet({ title: '', code: '' }); // Reset form
+      setNewSnippet({ title: '', code: '' }); 
     }
   };
 
+ 
   const handleDeleteSnippet = (id) => {
     setSnippets(snippets.filter(snippet => snippet.id !== id));
   };
 
+  
   const handleEditSnippet = (id) => {
     const snippet = snippets.find(snippet => snippet.id === id);
     if (snippet) {
@@ -33,20 +36,32 @@ const Dashboard = () => {
 
   return (
     <div className="flex h-screen">
-      <Sidebar />
+      {}
+      <div className="w-64 bg-gray-800 text-white p-4">
+        <div className="text-center text-xl font-semibold">SnipSync</div>
+        <ul className="mt-8">
+          <li><Link to="/Dashboard" className="block py-2 px-4 hover:bg-gray-700">Dashboard</Link></li>
+          <li><Link to="/MyProjects" className="block py-2 px-4 hover:bg-gray-700">My Projects</Link></li>
+          <li><Link to="/Profile" className="block py-2 px-4 hover:bg-gray-700">Profile</Link></li>
+          <li><Link to="/Teams" className="block py-2 px-4 hover:bg-gray-700">Teams</Link></li>
+          <li><Link to="/Settings" className="block py-2 px-4 hover:bg-gray-700">Settings</Link></li>
+          <li><Link to="/Logout" className="block py-2 px-4 hover:bg-gray-700">Logout</Link></li>
+        </ul>
+      </div>
 
-      <div className="flex-1 bg-gray-900 p-6">
-
+      {}
+      <div className="flex-1 bg-white p-6">
+        {}
         <div className="flex justify-between items-center mb-4">
-          <div className="text-2xl font-semibold text-white">Welcome, User</div>
+          <div className="text-2xl font-semibold text-gray-800">Welcome, User</div>
           <div className="flex items-center space-x-4">
           </div>
         </div>
 
-       
+        {}
         <div className="mb-6">
           <div className="flex justify-between items-center">
-            <h3 className="text-xl font-semibold text-white">Your Snippets</h3>
+            <h3 className="text-xl font-semibold text-gray-800">Your Snippets</h3>
             <button
               onClick={() => handleAddSnippet()}
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
@@ -55,7 +70,7 @@ const Dashboard = () => {
             </button>
           </div>
 
-        
+          {}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6">
             {snippets.map((snippet) => (
               <div key={snippet.id} className="bg-white p-4 rounded-lg shadow-md">
@@ -82,6 +97,7 @@ const Dashboard = () => {
           </div>
         </div>
 
+        {}
         <div className="mt-6 bg-white p-4 rounded-lg shadow-md">
           <h3 className="text-xl font-semibold mb-4">Add a New Snippet</h3>
           <input
@@ -105,9 +121,9 @@ const Dashboard = () => {
             Save Snippet
           </button>
         </div>
-      </main>
+      </div>
     </div>
   );
-}
+};
 
 export default Dashboard;
