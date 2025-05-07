@@ -5,6 +5,7 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 router.use(cookieParser());
+require('dotenv').config();
 
 router.post('/login', async (req, res) => {
     try {
@@ -14,7 +15,7 @@ router.post('/login', async (req, res) => {
             return res.json({ message: "Email or password is incorrect!" });
         bcrypt.compare(password, incomingUser.password, (err, result) => {
             if (result) {
-                let token = jwt.sign({email}, "gatfghrf");
+                let token = jwt.sign({email}, process.env.JWT_SECRET);
                 res.cookie("token", token,  {
                     httpOnly: true,
                     secure: false, 

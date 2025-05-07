@@ -4,9 +4,9 @@ import Homepage from "./pages/Homepage";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
-import AddTeam from "./pages/AddTeam";
 import MyProject from "./components/MyProjects";
 import Profile from "./pages/Profile";
+import InvitationRedirect from "./pages/InvitationRedirect";
 function App() {
   return (
     <BrowserRouter>
@@ -15,10 +15,10 @@ function App() {
         <Route path="/login" element={<Login />}></Route>
         <Route path="/signup" element={<SignUp />}></Route>
         <Route path="/dashboard" element={<Dashboard />}></Route>
-        <Route path="/addteam" element={<AddTeam />}></Route>
         <Route path="/profile"  element={<Profile/>}></Route>
         <Route path="/myprojects" element={<MyProject />}></Route>
         <Route path="/profile" element={<Profile />}></Route>
+        <Route path="/invite" element={<InvitationRedirect />}></Route>
 
       </Routes>
     </BrowserRouter>

@@ -10,6 +10,34 @@ function SignUp() {
   const [enteredOtp, setEnteredOtp] = useState('');
   const [isVerified, setIsVerified] = useState(false);
   const [verifyOtp, setVerifyOtp] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    let validationErrors = {};
+    const usernameRegex = /^[a-zA-Z]+[a-zA-Z0-9]/;
+    if (!formData.username) {
+      validationErrors.username = "Username required";
+    }
+    else if(!usernameRegex.test(formData.username))
+    {
+      validationErrors.username = "Invalid username";
+    }
+    const emailRegex = /\S+@\S+\.\S+/;
+    if (!formData.email) {
+      validationErrors.email = "Email Required";
+    }
+    else if (!emailRegex.test(formData.email)) {
+      validationErrors.email = "Invaild email";
+    }
+    if (!formData.password) {
+      validationErrors.password = "Password required";
+    }
+    else if (formData.password.length < 6) {
+      validationErrors.password = "Password should be atleast 6 characters";
+    }
+    setErrors(validationErrors);
+    return Object.keys(validationErrors).length === 0;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,24 +60,29 @@ function SignUp() {
   };
 
   const handleOtp = async () => {
-    try {
-      const response = await axios.post(`http://localhost:8000/sendotp/${formData.email}`);
-      console.log(response);
-      if (response.status === 200) {
-        toast.success(response.data.message);
-        setVerifyOtp(true);
-        setOtp(response.data.otp);
+    if (!validate()) {
+      toast.error("Please check the details");
+    }
+    else {
+      try {
+        const response = await axios.post(`http://localhost:8000/sendotp/${formData.email}`);
+        console.log(response);
+        if (response.status === 200) {
+          toast.success(response.data.message);
+          setVerifyOtp(true);
+          setOtp(response.data.otp);
+        }
+        else {
+          toast.error(response.data.message);
+        }
       }
-      else {
-        toast.error(response.data.message);
+      catch (error) {
+        console.log(error);
+        toast.error(error.response.data.message);
       }
     }
-    catch(error)
-    {
-      console.log(error);
-      toast.error(error.response.data.message);
-    }
-    
+
+
   }
 
   const handleOtpVerification = () => {
@@ -65,7 +98,7 @@ function SignUp() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
-      <Toaster />
+      <Toaster toastOptions={{style: {background: '#1F2937', color: 'white'}}}/>
       <div className="bg-gray-800 p-10 rounded-xl shadow-lg w-full max-w-md">
         <h2 className="text-3xl font-bold mb-6 text-center">Create your account</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -80,6 +113,7 @@ function SignUp() {
               className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
+            {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
           </div>
 
           <div>
@@ -93,6 +127,8 @@ function SignUp() {
               className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
+            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+
           </div>
 
           <div>
@@ -106,12 +142,13 @@ function SignUp() {
               className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
-            <p className="text-xs text-gray-400 mt-1">At least 6 characters</p>
+            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+
           </div>
 
           <div className="flex justify-between mt-4">
             <button
-              className="bg-blue-600 cursor-pointer text-white py-2 rounded hover:bg-blue-700 transition-all duration-200"
+              className="bg-blue-600 cursor-pointer text-white py-2 px-4 rounded hover:bg-blue-700 transition-all duration-200"
               type='button'
               onClick={handleOtp}
             >
@@ -119,30 +156,32 @@ function SignUp() {
             </button>
           </div>
 
-            {verifyOtp && <input
-              type="text"
-              name="otp"
-              onChange={(e) => setEnteredOtp(e.target.value)}
-              placeholder="Enter OTP"
-              className="p-2 mb-4 mt-4 border rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
-            />}
+          {verifyOtp && <input
+            type="text"
+            name="otp"
+            onChange={(e) => setEnteredOtp(e.target.value)}
+            placeholder="Enter OTP"
+            className="p-2 mb-4 mt-4 border rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+          />}
 
-            {verifyOtp && <button
-              type='button'
-              className="bg-blue-600 cursor-pointer text-white py-2 rounded hover:bg-blue-700 transition-all duration-200"
-              onClick={handleOtpVerification}
-            >
-              Verify OTP
-            </button>}
+          {verifyOtp && <button
+            type='button'
+            className="bg-blue-600 cursor-pointer text-white ml-4 py-2 px-4 rounded hover:bg-blue-700 transition-all duration-200"
+            onClick={handleOtpVerification}
+          >
+            Verify OTP
+          </button>}
+
+          <br></br>
 
 
-            {isVerified && <button
-              type="submit"
-              className="bg-blue-600 mt-2 cursor-pointer text-white py-2 rounded hover:bg-blue-700 transition-all duration-200"
-            >
-              Sign Up
-            </button>
+          {isVerified && <button
+            type="submit"
+            className="bg-blue-600 mt-2 cursor-pointer text-white py-2 w-full rounded hover:bg-blue-700 transition-all duration-200"
+          >
+            Sign Up
+          </button>
           }
         </form>
         <p className="text-sm text-center mt-6">

@@ -3,21 +3,22 @@ const user = require('../models/userModel');
 const router = express.Router();
 const bcrypt = require('bcrypt'); 
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 const cookieParser = require('cookie-parser');
 
 router.use(cookieParser());
 
 router.post('/signup', async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const {username, email, password } = req.body;
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
         const userFound = await user.findOne({email});
         if(!userFound)
         {
-            const newUser = new user({ email, password: hash });
+            const newUser = new user({username, email, password: hash });
             const createdUser = await newUser.save();
-            let token = jwt.sign({email}, "gatfghrf");
+            let token = jwt.sign({email}, process.env.JWT_SECRET);
             res.cookie("token", token, {
                 httpOnly: true,
                 secure: false, 
