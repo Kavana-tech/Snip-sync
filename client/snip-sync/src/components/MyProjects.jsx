@@ -125,7 +125,7 @@ function MyProject() {
                 <Sidebar />
                 <div className="min-h-screen bg-gray-900 text-white w-full">
                     <div className="flex px-4 py-2 justify-between bg-black/30">
-                        <h1 className="text-2xl font-semibold">Your Projects:</h1>
+                        <h1 className="text-2xl font-semibold p-4">Your Projects:</h1>
                         <button type="button" className="bg-blue-500 cursor-pointer px-4 py-2 text-xl font-semibold rounded-md" onClick={handleAdd}>
                             <div className="flex justify-center items-center text-white">New<Plus className="ml-2 font-semibold" /></div>
                         </button>
