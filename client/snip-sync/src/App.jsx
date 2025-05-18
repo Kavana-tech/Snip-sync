@@ -9,6 +9,9 @@ import Profile from "./pages/Profile";
 import InvitationRedirect from "./pages/InvitationRedirect";
 import Settings from "./pages/Settings";
 import ProjectDetails from "./pages/ProjectDetails";
+import ManageSnip from "./pages/ManageSnips";
+import CreateFiles from "./pages/CreateFiles";
+import OpenFile from "./pages/OpenFile";
 function App() {
   return (
     <BrowserRouter>
@@ -23,6 +26,9 @@ function App() {
         <Route path="/invite" element={<InvitationRedirect />}></Route>
         <Route path="/settings" element={<Settings />}></Route>
         <Route path="projectdetails" element={<ProjectDetails />}></Route>
+        <Route path="/managesnips" element={<ManageSnip/>}></Route>
+        <Route path="/files/:folderId" element={<CreateFiles />}></Route>
+        <Route path="/openfile" element={<OpenFile />}></Route>
       </Routes>
     </BrowserRouter>
   );

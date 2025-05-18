@@ -30,6 +30,15 @@ const generateInviteLink = require('./routes/generateInviteLink');
 const processInvitation = require('./routes/processInvitation');
 const fetchUser = require('./routes/fetchUser');
 const getProject = require('./routes/getProject');
+const createFolder = require('./routes/createFolder');
+const getFolder = require("./routes/getFolder");
+const deleteFolder = require('./routes/deleteFolder');
+const getFiles = require('./routes/getFiles');
+const addFile = require('./routes/addFiles');
+const addSnippet = require('./routes/addSnippets');
+const getSnippets = require('./routes/snippets');
+const deleteSnippet = require('./routes/deleteSnippet');
+const deleteFile = require('./routes/deleteFile');
 
 app.use('/', signup);
 app.use('/', logout);
@@ -44,6 +53,16 @@ app.use('/', generateInviteLink);
 app.use('/', processInvitation);
 app.use('/', fetchUser);
 app.use('/', getProject);
+app.use('/', createFolder);
+app.use('/', getFolder);
+app.use('/', deleteFolder);
+app.use('/', getFiles);
+app.use('/', addFile);
+app.use('/', addSnippet);
+app.use('/', getSnippets);
+app.use('/', deleteSnippet);
+app.use('/', deleteFile);
+
 
 app.get('/', (req, res) => {
     res.send("home page");

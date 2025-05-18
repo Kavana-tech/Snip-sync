@@ -2,6 +2,7 @@ import React from "react";
 import ProjectCard from "./ProjectCard";
 import DashProjectCard from "./DashProjectCard";
 function FetchedProjects({ projects, setProjects, invite }) {
+    console.log(invite);
     const displayProjectCard = projects && setProjects && invite;
     const displayDashboardProjectCard = projects && (!setProjects || !invite);
     return (
