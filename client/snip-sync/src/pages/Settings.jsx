@@ -1,87 +1,120 @@
-import React from 'react';
+import React, { useState } from "react";
+import Sidebar from "../components/Sidebar";
 
 function Settings() {
+  const [settings, setSettings] = useState({
+    twoFactorAuth: false,
+    loginAlerts: true,
+    theme: "system",
+    profileVisibility: "public",
+    emailNotifications: true,
+    snippetAlerts: true,
+  });
+
+  const handleToggle = (e) => {
+    const { name, checked } = e.target;
+    setSettings((prev) => ({ ...prev, [name]: checked }));
+  };
+
+  const handleSelect = (e) => {
+    const { name, value } = e.target;
+    setSettings((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSave = () => {
+    // Here you would send the settings to your backend (POST request)
+    console.log("Settings saved:", settings);
+    alert("Settings updated successfully!");
+  };
+
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-6">
-      <div className="max-w-4xl mx-auto bg-gray-800 rounded-xl shadow-md p-8 space-y-10">
-        <h1 className="text-3xl font-bold">Settings</h1>
+    <div className="flex">
+      <Sidebar />
+      <div className="p-6 w-full min-h-screen bg-gray-900 text-white">
+        <h2 className="text-3xl font-bold mb-6">Settings</h2>
 
-        
-        <section>
-          <h2 className="text-xl font-semibold mb-4">Edit Profile</h2>
-          <div className="space-y-4">
+        {/* Account & Security */}
+        <div className="mb-6">
+          <h3 className="text-xl font-semibold mb-3">Account & Security</h3>
+          <label className="flex items-center gap-3 mb-2">
             <input
-              type="text"
-              placeholder="Full Name"
-              className="w-full p-3 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              type="checkbox"
+              name="twoFactorAuth"
+              checked={settings.twoFactorAuth}
+              onChange={handleToggle}
             />
-            <input
-              type="email"
-              placeholder="Email Address"
-              className="w-full p-3 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-500"
-            />
-            <button className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded">
-              Save Profile
-            </button>
-          </div>
-        </section>
-
-        
-        <section>
-          <h2 className="text-xl font-semibold mb-4">Change Password</h2>
-          <div className="space-y-4">
-            <input
-              type="password"
-              placeholder="Current Password"
-              className="w-full p-3 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-500"
-            />
-            <input
-              type="password"
-              placeholder="New Password"
-              className="w-full p-3 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-500"
-            />
-            <input
-              type="password"
-              placeholder="Confirm New Password"
-              className="w-full p-3 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-500"
-            />
-            <button className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded">
-              Update Password
-            </button>
-          </div>
-        </section>
-
-        
-        <section>
-          <h2 className="text-xl font-semibold mb-4">Notifications</h2>
-          <div className="space-y-3">
-            <label className="flex items-center space-x-2">
-              <input type="checkbox" className="form-checkbox text-cyan-500 h-5 w-5" />
-              <span>Email me about new features</span>
-            </label>
-            <label className="flex items-center space-x-2">
-              <input type="checkbox" className="form-checkbox text-cyan-500 h-5 w-5" />
-              <span>Notify me when someone shares a snippet</span>
-            </label>
-          </div>
-        </section>
-
-        
-        <section>
-          <h2 className="text-xl font-semibold mb-4">Appearance</h2>
-          <label className="flex items-center space-x-2">
-            <input type="checkbox" className="form-checkbox text-cyan-500 h-5 w-5" />
-            <span>Enable Dark Mode</span>
+            Enable Two-Factor Authentication (2FA)
           </label>
-        </section>
+          <label className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              name="loginAlerts"
+              checked={settings.loginAlerts}
+              onChange={handleToggle}
+            />
+            Email me when a new device logs in
+          </label>
+        </div>
 
-        
-        <section>
-          <h2 className="text-xl font-semibold mb-4 text-red-400">Danger Zone</h2>
-          <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
-            Delete My Account
-          </button>
-        </section>
+        {/* Profile Customization */}
+        <div className="mb-6">
+          <h3 className="text-xl font-semibold mb-3">Profile Customization</h3>
+          <div className="mb-3">
+            <label className="block mb-1">Theme Preference</label>
+            <select
+              name="theme"
+              value={settings.theme}
+              onChange={handleSelect}
+              className="bg-gray-800 text-white p-2 rounded"
+            >
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+              <option value="system">System Default</option>
+            </select>
+          </div>
+          <div>
+            <label className="block mb-1">Profile Visibility</label>
+            <select
+              name="profileVisibility"
+              value={settings.profileVisibility}
+              onChange={handleSelect}
+              className="bg-gray-800 text-white p-2 rounded"
+            >
+              <option value="public">Public</option>
+              <option value="private">Private</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Notifications */}
+        <div className="mb-6">
+          <h3 className="text-xl font-semibold mb-3">Notifications</h3>
+          <label className="flex items-center gap-3 mb-2">
+            <input
+              type="checkbox"
+              name="emailNotifications"
+              checked={settings.emailNotifications}
+              onChange={handleToggle}
+            />
+            Receive Email Notifications
+          </label>
+          <label className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              name="snippetAlerts"
+              checked={settings.snippetAlerts}
+              onChange={handleToggle}
+            />
+            Notify me about snippet activity
+          </label>
+        </div>
+
+        <button
+          onClick={handleSave}
+          className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded"
+        >
+          Save Settings
+        </button>
       </div>
     </div>
   );
