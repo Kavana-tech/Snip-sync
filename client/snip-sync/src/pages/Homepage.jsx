@@ -1,6 +1,7 @@
 import React from 'react';
 import { Search } from 'lucide-react';
 import {Link}  from 'react-router-dom';
+import actionVideo from '../assets/action.mp4'
 
 export default function HomePage() {
   return (
@@ -31,21 +32,18 @@ export default function HomePage() {
        </Link>
       </section>
 
-      {/* Video Demo Section 
+      {/* Video Demo Section */}
       <section className="flex flex-col items-center px-6 py-12 bg-slate-900">
         <h3 className="text-3xl font-bold text-white mb-6">Watch SnipSync in Action</h3>
-        <div className="w-full max-w-3xl aspect-video">
-          <iframe
+         <div className="w-full max-w-3xl aspect-video">
+          <video
+            src={actionVideo}
+            controls
+            autoPlay
             className="w-full h-full rounded-xl shadow-lg"
-            src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-            title="SnipSync Demo"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          ></iframe>
+         />
         </div>
-      </section>
-    */}
+       </section>
 
       {/* Snippet Preview Section 
       <section className="bg-slate-800 py-16 px-6">
