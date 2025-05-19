@@ -11,6 +11,16 @@ const projectSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    projectId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'projects',
+        required: true
+    },
+    // createdBy: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'user',
+    //     required: true
+    // },
     createdBy: {
         type: String,
         required : true
@@ -18,9 +28,11 @@ const projectSchema = new mongoose.Schema({
     inviteToken: {
         type:String
     },
-    teamMember:{
-        type: String
-    }
+   teamMembers: [{
+  email: { type: String },
+  username: { type: String}
+}]
+
 })
 
 const project = mongoose.model("projects", projectSchema);

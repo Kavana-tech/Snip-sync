@@ -6,6 +6,7 @@ const router = express.Router();
 router.post('/addfiles/:folderId', async (req, res) => {
     const { folderId } = req.params;
     const { fileName } = req.body;
+    const io = req.app.get('io');
 
     try {
         const existingFolder = await folder.findById(folderId);
@@ -31,6 +32,11 @@ router.post('/addfiles/:folderId', async (req, res) => {
         });
 
         await rootSnippet.save();
+
+        io.to(folderId).emit("file-created", {
+            folderId, 
+            file:newFile
+        });
 
         res.status(200).json({
             message: 'File created successfully',

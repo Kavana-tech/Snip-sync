@@ -26,9 +26,8 @@ const snippetNodeSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    authorId:{
-        type:  mongoose.Schema.Types.ObjectId,
-        ref: 'user'
+    author:{
+        type:  String,
     },
     tags: [String],
     branch: {
