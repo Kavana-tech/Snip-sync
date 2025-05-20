@@ -21,6 +21,7 @@ function Sidebar() {
         <div className="w-64 bg-gray-800 text-white p-4 min-h-screen shadow-lg">
             <div className="text-center text-xl font-semibold">SnipSync</div>
             <ul className="mt-8">
+                <li><Link to={'/'} className="block py-2 px-4 hover:bg-gray-700 hover:text-cyan-400">Home</Link></li>
                 <li><Link to={'/dashboard'} className="block py-2 px-4 hover:bg-gray-700 hover:text-cyan-400">Dashboard</Link></li>
                 <li><Link to={'/myprojects'} className="block py-2 px-4 hover:bg-gray-700 hover:text-cyan-400">My Projects</Link></li>
                 <li><Link to="/Profile" className="block py-2 px-4 hover:bg-gray-700 hover:text-cyan-400">Profile</Link></li>

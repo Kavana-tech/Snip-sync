@@ -8,8 +8,6 @@ import { useNavigate } from "react-router-dom";
 import { toast, Toaster } from 'react-hot-toast';
 import { socket } from "../socket";
 
-
-
 function CreateFiles() {
     const navigate = useNavigate();
     const { folderId } = useParams();

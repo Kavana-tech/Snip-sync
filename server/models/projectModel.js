@@ -14,7 +14,7 @@ const projectSchema = new mongoose.Schema({
     projectId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'projects',
-        required: true
+        // required: true
     },
     // createdBy: {
     //     type: mongoose.Schema.Types.ObjectId,
