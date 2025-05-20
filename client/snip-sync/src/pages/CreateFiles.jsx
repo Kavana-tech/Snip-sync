@@ -6,7 +6,7 @@ import axios from "axios";
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from "react-router-dom";
 import { toast, Toaster } from 'react-hot-toast';
-
+import { socket } from "../socket";
 
 function CreateFiles() {
     const navigate = useNavigate();
@@ -16,6 +16,24 @@ function CreateFiles() {
     const [fileData, setFileData] = useState({
         fileName: ''
     })
+
+    useEffect(() => {
+        socket.emit("join-folder", folderId);
+
+        socket.on("file-created", ({ folderId: incomingId, file }) => {
+            if (incomingId === folderId) {
+                setFiles(prev => [...prev, file]);
+                toast.success(`New file "${file.fileName}" added by a teammate`);
+            }
+        });
+
+        return () => {
+            socket.emit("leave-folder", folderId);
+            socket.off("file-created");
+        };
+    }, [folderId]);
+
+
     useEffect(() => {
         const fetchFiles = async () => {
             try {
@@ -59,18 +77,19 @@ function CreateFiles() {
         try {
             let response = await axios.post(`http://localhost:8000/addfiles/${folderId}`, fileData);
             if (response.status === 200) {
-                setFiles((prev) => [...prev, response.data.file]);
+                // setFiles((prev) => [...prev, response.data.file]);
                 setFileData({ fileName: '' });
                 setFormCard(false);
             }
         }
         catch (error) {
             console.log(error);
+            toast.error(error.response.data.message);
         }
     }
     return (
         <div>
-            <Toaster toastOptions={{style: {background: '#1F2937', color: 'white'}}}/>
+            <Toaster toastOptions={{ style: { background: '#1F2937', color: 'white' } }} />
             <div className="flex">
                 <Sidebar />
                 <div className="min-h-screen bg-gray-900 text-white w-full">

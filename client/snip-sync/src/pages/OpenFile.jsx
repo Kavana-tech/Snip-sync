@@ -1,10 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import { Plus } from "lucide-react";
+import { Copy, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, Toaster } from 'react-hot-toast';
+import { diffWords } from 'diff';
+import { socket } from "../socket";
+
+const renderDiff = (oldText, newText) => {
+    const diff = diffWords(oldText || "", newText || "");
+    return diff.map((part, index) => {
+        const style = {
+            backgroundColor: part.added ? '#064e3b' : part.removed ? '#7f1d1d' : 'transparent',
+            color: part.added || part.removed ? 'white' : 'inherit',
+            padding: '0 2px',
+            borderRadius: '2px',
+        };
+        return (
+            <span key={index} style={style}>
+                {part.value}
+            </span>
+        );
+    });
+};
+
 
 const OpenFile = () => {
     const navigate = useNavigate();
@@ -16,6 +36,39 @@ const OpenFile = () => {
     const [parentId, setParentId] = useState(null);
     const [tag, setTag] = useState([]);
     const [snippetName, setSnippetName] = useState('');
+
+    useEffect(() => {
+
+        socket.emit("join-file", file._id);
+
+        const onSnippetAdded = ({ fileId, snippet }) => {
+            if (fileId === file._id) {
+                setSnippets(prev => {
+                    const exists = prev.find(s => s._id === res.data.snippet._id);
+                    if (exists) return prev;
+                    return [...prev, res.data.snippet];
+                });
+                toast.success(`New snippet "${snippet.snippetName}" added`);
+            }
+        };
+
+        const onSnippetDeleted = ({ fileId, snippetId }) => {
+            if (fileId === file._id) {
+                setSnippets(prev => prev.filter(s => s._id !== snippetId));
+                toast.success("A snippet was deleted");
+            }
+        };
+
+        socket.on("snippet-added", onSnippetAdded);
+        socket.on("snippet-deleted", onSnippetDeleted);
+
+        return () => {
+            socket.emit("leave-file", file._id);
+            socket.off("snippet-added", onSnippetAdded);
+            socket.off("snippet-deleted", onSnippetDeleted);
+        };
+    }, [file._id]);
+
 
 
     useEffect(() => {
@@ -38,11 +91,13 @@ const OpenFile = () => {
                 snippetName,
                 tags: tag,
                 parentId: parentId || null
-            });
+            }, { withCredentials: true });
 
             toast.success("Snippet added successfully!");
             setSnippetContent("");
             setParentId(null);
+            setTag('');
+            setSnippetName('');
             setCreateCard(false);
             setSnippets([...snippets, res.data.snippet]);
         } catch (error) {
@@ -59,15 +114,24 @@ const OpenFile = () => {
     }
 
     const handleDeleteSnippet = async (id) => {
-    try {
-        await axios.delete(`http://localhost:8000/deletesnippet/${id}`);
-        toast.success("Snippet deleted successfully!");
-        setSnippets(snippets.filter(snippet => snippet._id !== id));
-    } catch (error) {
-        console.error("Error deleting snippet:", error);
-        toast.error("Failed to delete snippet");
+        try {
+            await axios.delete(`http://localhost:8000/deletesnippet/${id}`);
+            toast.success("Snippet deleted successfully!");
+            setSnippets(snippets.filter(snippet => snippet._id !== id));
+        } catch (error) {
+            console.error("Error deleting snippet:", error);
+            toast.error("Failed to delete snippet");
+        }
+    };
+
+    const handleCopySnippet = (copiedSnip) => {
+        navigator.clipboard.writeText(copiedSnip).then(() => {
+            toast.success("Link Copied");
+        }).catch(error => {
+            console.log(error);
+            toast.error("Can't Copy Link");
+        })
     }
-};
 
 
     return (
@@ -80,6 +144,38 @@ const OpenFile = () => {
                         <h1 className="text-2xl font-semibold p-4">{file.fileName}</h1>
                         <button className="bg-cyan-900 text-xl font-medium px-4 py-0 mt-2 rounded-sm cursor-pointer">Visualize</button>
                     </div>
+
+                    <div className="w-full bg-black/30 mb-4 px-4 py-2 flex items-center gap-4">
+                        <div className="flex items-center text-white gap-2">
+                            <span className="font-semibold">Filter</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L15 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 019 21v-7.586L3.293 6.707A1 1 0 013 6V4z" />
+                            </svg>
+                        </div>
+                        <select
+                            className="bg-gray-800 border border-gray-600 text-white p-2 rounded-md"
+                           
+                            
+                        >
+                            <option value="">Select filter by</option>
+                            <option value="name">Snippet Name</option>
+                            <option value="tag">Tag</option>
+                            <option value="date">Created Date</option>
+                        </select>
+                        <input
+                            type="text"
+                            className="bg-gray-800 border border-gray-600 text-white p-2 rounded-md"
+                            placeholder="Enter search term"
+                            
+                        />
+                        <button
+                            className="bg-cyan-900 text-white px-4 py-2 rounded-sm"
+                            
+                        >
+                            Search
+                        </button>
+                    </div>
+
 
                     {snippets.length === 0 ? (
                         <div className="flex justify-center items-center h-[calc(100vh-10rem)]">
@@ -113,16 +209,22 @@ const OpenFile = () => {
                                                     ? ` (version ${versionNumber} of ${parentSnippet.snippetName})`
                                                     : ''}
                                             </p>
-                                            <div>
+                                            <div className="flex">
+                                                <button title="Copy Current Code" onClick={() => handleCopySnippet(snippet.content)}><Copy className="text-gray-500 cursor-pointer" /></button>
                                                 <button className="text-red-600 ml-4 cursor-pointer" onClick={() => handleDeleteSnippet(snippet._id)}>Delete</button>
                                                 <button className="text-blue-600 ml-4 cursor-pointer" onClick={() => handleFork(snippet._id)}>Fork</button>
                                             </div>
                                         </div>
 
-                                        <pre className="whitespace-pre-wrap bg-black p-2 mt-2">{snippet.content}</pre>
+                                        <pre className="whitespace-pre-wrap bg-black p-2 mt-2">
+                                            {snippet.parentId && parentSnippet
+                                                ? renderDiff(parentSnippet.content, snippet.content)
+                                                : snippet.content}
+                                        </pre>
                                         <div className="mt-2 flex flex-wrap justify-between text-sm text-gray-400">
                                             <p>Tags: {snippet.tags && snippet.tags.length > 0 ? snippet.tags.join(', ') : 'No tags'}</p>
-                                            <p>Created: {new Date(snippet.createdAt).toLocaleString()}</p>
+                                            <p>Created At: {new Date(snippet.createdAt).toLocaleString()}</p>
+                                            <p className="bg-cyan-900 rounded-xl px-4 text-white">Created By: {snippet.author}</p>
                                         </div>
                                     </div>
                                 );
@@ -147,13 +249,17 @@ const OpenFile = () => {
                                         value={snippetContent}
                                         onChange={(e) => setSnippetContent(e.target.value)}
                                     ></textarea>
+                                    <div className="flex gap-6">
+                                        <button
+                                            className="bg-cyan-900 p-2 mt-4 font-medium text-xl min-w-[300px] rounded-sm cursor-pointer"
+                                            onClick={handleAddSnippet}
+                                        >
+                                            Add Snippet
+                                        </button>
+                                        <button className="bg-cyan-900 p-2 mt-4 font-medium text-xl min-w-[300px] rounded-sm cursor-pointer"
+                                            onClick={() => setCreateCard(false)}>Cancel</button>
+                                    </div>
 
-                                    <button
-                                        className="bg-cyan-900 p-2 mt-4 font-medium text-xl max-w-[300px] rounded-sm cursor-pointer"
-                                        onClick={handleAddSnippet}
-                                    >
-                                        Add Snippet
-                                    </button>
                                 </div>
 
 

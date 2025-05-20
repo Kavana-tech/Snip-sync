@@ -4,6 +4,35 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
+const {Server} = require('socket.io');
+
+const http = require('http');
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: 'http://localhost:5173',
+        methods: ['GET', 'POST', 'DELETE'],
+    },
+})
+app.set('io', io);
+
+io.on('connection', (socket) => {
+  console.log('A user connected:', socket.id);
+
+  socket.on('join-folder', (folderId) => {
+    socket.join(folderId);
+    console.log(`Socket ${socket.id} joined folder ${folderId}`);
+  });
+
+  socket.on('leave-folder', (folderId) => {
+    socket.leave(folderId);
+    console.log(`Socket ${socket.id} left folder ${folderId}`);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected:', socket.id);
+  });
+});
 
 app.use(cors({
     origin: 'http://localhost:5173', 
@@ -68,6 +97,6 @@ app.get('/', (req, res) => {
     res.send("home page");
 });
 
-app.listen(8000, () => {
-    console.log("Server is Running");
+server.listen(8000, () => {
+    console.log("Server running on port 8000");
 });

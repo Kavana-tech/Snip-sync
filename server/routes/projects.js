@@ -5,11 +5,11 @@ const router = express.Router();
 
 router.post('/addproject', authentication, async(req, res) => {
     try{
-        const {title, description, workingAs, inviteToken, teamMember} = req.body;
+        const {title, description, workingAs, inviteToken, teamMembers} = req.body;
         console.log(inviteToken)
         let newProject;
         if(workingAs === 'team')
-            newProject = new project({title, description, workingAs, createdBy: req.user.email, inviteToken, teamMember});
+            newProject = new project({title, description, workingAs, createdBy: req.user.email, inviteToken, teamMembers});
         else
         {
             newProject = new project({title, description, workingAs, createdBy: req.user.email,});

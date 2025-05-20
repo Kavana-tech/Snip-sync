@@ -7,8 +7,8 @@ function DeleteProject({ deleteProject, onClose, allProjects, setProjects }) {
     const [card, setCard] = useState(true);
     const handleDeleteProject = async () => {
         try {
-            setProjects(allProjects.filter((proj) => proj._id != deleteProject._id));
             let response = await axios.get(`http://localhost:8000/deleteproject/${deleteProject._id}`);
+            setProjects(allProjects.filter((proj) => proj._id !== deleteProject._id));
             console.log(response);
             toast.success(response.data.message);
             setCard(false);
