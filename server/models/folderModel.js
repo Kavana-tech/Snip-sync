@@ -24,7 +24,12 @@ const folderSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
-    }
+    },
+    projectId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'projects',
+            required: true
+        },
 });
 
 const folder = mongoose.model('folder', folderSchema)

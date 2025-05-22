@@ -2,9 +2,10 @@ const express = require('express');
 const folder = require('../models/folderModel');
 const router = express.Router();
 
-router.get('/getfolders',async (req, res) => {
+router.get('/getfolders/:projectId',async (req, res) => {
     try{
-        const folders = await folder.find();
+        const {projectId} = req.params;
+        const folders = await folder.find({ projectId });
         res.json(folders);
     }
     catch(error)
