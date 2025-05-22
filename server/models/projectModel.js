@@ -11,16 +11,10 @@ const projectSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    projectId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'projects',
-        // required: true
+    createdAt: {
+        type: Date,
+        default: Date.now
     },
-    // createdBy: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'user',
-    //     required: true
-    // },
     createdBy: {
         type: String,
         required : true

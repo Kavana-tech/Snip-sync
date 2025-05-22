@@ -1,8 +1,10 @@
-
 import React from "react";
 import Sidebar from "../components/Sidebar";
 import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
+
 function ProjectDetails() {
+    const {projectId} = useParams();
     return (
         <div className="flex">
             <Sidebar />
@@ -13,7 +15,7 @@ function ProjectDetails() {
 
                 <div className="w-full flex flex-wrap justify-around">
                     <button title="Add your resusable codes" className="bg-gray-800 md:w-80 w-48 text-xl font-medium p-4 cursor-pointer rounded-sm"><Link>Reusable Codes</Link></button>
-                    <button title="Add your codes for version control" className="bg-gray-800 md:w-80 w-48 text-xl font-medium p-4 cursor-pointer rounded-sm"><Link to={'/managesnips'}>Manage Snips</Link></button>
+                    <button title="Add your codes for version control" className="bg-gray-800 md:w-80 w-48 text-xl font-medium p-4 cursor-pointer rounded-sm"><Link to={`/managesnips/${projectId}`}>Manage Snips</Link></button>
                 </div>
             </div>
         </div>

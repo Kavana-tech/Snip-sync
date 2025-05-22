@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import FetchedProjects from "./FetchedProjects";
 import { toast, Toaster } from 'react-hot-toast';
+import { useRef } from "react";
 
 function MyProject() {
     const [addCard, setAddCard] = useState(false);
@@ -33,21 +34,30 @@ function MyProject() {
         return Object.keys(validationErrors).length === 0;
     }
 
-    useEffect(() => {
-        async function fetchProjects() {
-            try {
-                let response = await axios.get("http://localhost:8000/fetchprojects", {
-                    withCredentials: true,
-                })
-                console.log(response.data.fetchedProjects);
-                setProject(response.data.fetchedProjects || []);
-            }
-            catch (error) {
-                console.log(error);
-            }
+
+    const fetched = useRef(false);
+
+useEffect(() => {
+    if (fetched.current) return;
+    fetched.current = true;
+
+    async function fetchProjects() {
+        const toastId = toast.loading("Loading projects...", { position: "top-center", duration: Infinity });
+
+        try {
+            let response = await axios.get("http://localhost:8000/fetchprojects", { withCredentials: true });
+            console.log(response.data.fetchedProjects);
+            setProject(response.data.fetchedProjects || []);
+            toast.dismiss(toastId);
+            toast.success("Projects loaded!", { position: "top-center" });
+        } catch (error) {
+            console.log(error);
         }
-        fetchProjects();
-    }, [])
+    }
+
+    fetchProjects();
+}, []);
+
 
     const handleAdd = () => {
         setAddCard(true);
@@ -98,7 +108,7 @@ function MyProject() {
         try {
             let response = await axios.post("http://localhost:8000/generateinvite", {}, { withCredentials: true });
             let link = `http://localhost:5173/invite?token=${response.data}`
-            setProjectData({...projectData, inviteToken: response.data});
+            setProjectData({ ...projectData, inviteToken: response.data });
             setInviteLink(link);
             localStorage.setItem('invite', link);
             setInviteLinkInput(true);
@@ -109,7 +119,7 @@ function MyProject() {
     }
 
     const handleCopy = () => {
-        navigator.clipboard.writeText(inviteLink).then(()=> {
+        navigator.clipboard.writeText(inviteLink).then(() => {
             toast.success("Link Copied");
         }).catch(error => {
             console.log(error);
@@ -120,7 +130,7 @@ function MyProject() {
 
     return (
         <div>
-            <Toaster toastOptions={{style: {background: '#1F2937', color: 'white'}}}/>
+            <Toaster toastOptions={{duration:500, style: { background: '#1F2937', color: 'white' } }} />
             <div className="flex">
                 <Sidebar />
                 <div className="min-h-screen bg-gray-900 text-white w-full">
@@ -130,7 +140,7 @@ function MyProject() {
                             <div className="flex justify-center items-center text-white">New<Plus className="ml-2 font-semibold" /></div>
                         </button>
                     </div>
-                    <FetchedProjects projects={project} setProjects={setProject} invite={localStorage.getItem('invite')}/>
+                    <FetchedProjects projects={project} setProjects={setProject} invite={localStorage.getItem('invite')} />
                     <AnimatePresence>
                         {addCard && <motion.div className="fixed inset-0 bg-black/80 flex justify-center items-center z-50"
                             initial={{ opacity: 0, scale: 0.9 }}
@@ -179,7 +189,7 @@ function MyProject() {
                                             Invite Team</button><br />
                                         <div className="flex gap-4 items-center justify-center">
                                             {inviteLinkInput && <input type="text" value={inviteLink || ''} className="p-2 mt-4 w-full rounded bg-gray-700 text-white outline-0 focus:ring-2 focus:ring-cyan-400 cursor-pointer" readOnly />}
-                                            {inviteLinkInput && <Link className="mt-4 cursor-pointer" onClick={handleCopy}/>}
+                                            {inviteLinkInput && <Link className="mt-4 cursor-pointer" onClick={handleCopy} />}
                                         </div>
 
                                     </div>

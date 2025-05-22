@@ -25,8 +25,8 @@ function App() {
         <Route path="/profile" element={<Profile />}></Route>
         <Route path="/invite" element={<InvitationRedirect />}></Route>
         <Route path="/settings" element={<Settings />}></Route>
-        <Route path="projectdetails" element={<ProjectDetails />}></Route>
-        <Route path="/managesnips" element={<ManageSnip/>}></Route>
+        <Route path="projectdetails/:projectId" element={<ProjectDetails />}></Route>
+        <Route path="/managesnips/:projectId" element={<ManageSnip/>}></Route>
         <Route path="/files/:folderId" element={<CreateFiles />}></Route>
         <Route path="/openfile" element={<OpenFile />}></Route>
       </Routes>

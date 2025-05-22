@@ -5,20 +5,29 @@ import { motion, AnimatePresence } from 'framer-motion';
 import axios from "axios";
 import { toast, Toaster } from 'react-hot-toast';
 import CreateFolderCard from "../components/CreateFolderCard";
+import { useParams } from "react-router-dom";
+import { useRef } from "react";
 function ManageSnips() {
-
+    const { projectId } = useParams();
     const [formCard, setFormCard] = useState(false);
     const [allFolders, setAllFolders] = useState([]);
     const [folderData, setFolderData] = useState({
         folderName: '',
         files: [],
     })
+
+    const hasFetched = useRef(false);
     useEffect(() => {
+        if (hasFetched.current) return
+        hasFetched.current = true;
         async function getFolders() {
+            const toastId = toast.loading("Loading projects...", { position: "top-center", duration: Infinity });
             try {
-                let response = await axios.get("http://localhost:8000/getfolders");
+                let response = await axios.get(`http://localhost:8000/getfolders/${projectId}`);
                 console.log(response);
                 setAllFolders(response.data);
+                toast.dismiss(toastId);
+                toast.success("Folders loaded!", { position: "top-center" });
             }
             catch (error) {
                 console.log(error);
@@ -31,22 +40,22 @@ function ManageSnips() {
         setFolderData((prev) => ({ ...prev, [name]: value }));
     }
     const handleCreateFolder = async (e) => {
-    e.preventDefault();
-    try {
-        const response = await axios.post("http://localhost:8000/createfolder", folderData);
-        if (response.status === 200) {
-            setAllFolders((prev) => [...prev, response.data.createdFolder]);
-            setFolderData({ folderName: '', files: [] });
-            setFormCard(false);
-        }
-    } catch (error) {
-        if (error.response) {
-            toast.error(error.response.data.message || "Something went wrong");
-        } else {
-            toast.error("Network error");
+        e.preventDefault();
+        try {
+            const response = await axios.post(`http://localhost:8000/createfolder/${projectId}`, folderData);
+            if (response.status === 200) {
+                setAllFolders((prev) => [...prev, response.data.createdFolder]);
+                setFolderData({ folderName: '', files: [] });
+                setFormCard(false);
+            }
+        } catch (error) {
+            if (error.response) {
+                toast.error(error.response.data.message || "Something went wrong");
+            } else {
+                toast.error("Network error");
+            }
         }
     }
-}
 
 
     const handleClose = () => {
@@ -54,7 +63,7 @@ function ManageSnips() {
     }
     return (
         <div>
-            <Toaster toastOptions={{style: {background: '#1F2937', color: 'white'}}}/>
+            <Toaster toastOptions={{ duration: 500, style: { background: '#1F2937', color: 'white' } }} />
             <div className="flex">
                 <Sidebar />
                 <div className="min-h-screen bg-gray-900 text-white w-full">
