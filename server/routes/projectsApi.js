@@ -1,25 +1,29 @@
 const express = require('express');
 const router = express.Router();
+const Project = require('../models/projectModel'); // Make sure this model exists
 
-// Example data (replace with DB logic as needed)
-const projects = [
-  {
-    name: "Project A",
-    teams: [
-      { name: "Team 1", members: ["Alice", "Bob"] },
-      { name: "Team 2", members: ["Charlie"] }
-    ]
-  },
-  {
-    name: "Project B",
-    teams: [
-      { name: "Team X", members: ["David", "Eve"] }
-    ]
+// Get all projects (with teams)
+router.get('/', async (req, res) => {
+  try {
+    const projects = await Project.find();
+    res.json(projects);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch projects' });
   }
-];
+});
 
-router.get('/', (req, res) => {
-  res.json(projects);
+// Add a team to a project
+router.post('/', async (req, res) => {
+  const { projectName, team } = req.body;
+  try {
+    const project = await Project.findOne({ title: projectName });
+    if (!project) return res.status(404).json({ error: 'Project not found' });
+    project.teams.push(team);
+    await project.save();
+    res.status(201).json({ message: 'Team added', project });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to add team' });
+  }
 });
 
 module.exports = router;

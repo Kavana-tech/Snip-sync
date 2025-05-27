@@ -68,6 +68,7 @@ const addSnippet = require('./routes/addSnippets');
 const getSnippets = require('./routes/snippets');
 const deleteSnippet = require('./routes/deleteSnippet');
 const deleteFile = require('./routes/deleteFile');
+const projectsApi = require('./routes/projectsApi');
 
 app.use('/', signup);
 app.use('/', logout);
@@ -91,7 +92,7 @@ app.use('/', addSnippet);
 app.use('/', getSnippets);
 app.use('/', deleteSnippet);
 app.use('/', deleteFile);
-
+app.use('/api/projects', projectsApi);
 
 app.get('/', (req, res) => {
     res.send("home page");
