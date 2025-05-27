@@ -68,6 +68,12 @@ const addSnippet = require('./routes/addSnippets');
 const getSnippets = require('./routes/snippets');
 const deleteSnippet = require('./routes/deleteSnippet');
 const deleteFile = require('./routes/deleteFile');
+// const folderApproval = require('./routes/folderApproval');
+const approveDelete = require('./routes/approveDelete');
+const fetchPendingDeleteFolders = require('./routes/fetchPendingDeleteFolders');
+const rejectDeleteFolder = require('./routes/rejectDeleteFolder');
+const findCreator = require('./routes/findCreator');
+const getParentName = require('./routes/getParentName');
 
 app.use('/', signup);
 app.use('/', logout);
@@ -91,7 +97,13 @@ app.use('/', addSnippet);
 app.use('/', getSnippets);
 app.use('/', deleteSnippet);
 app.use('/', deleteFile);
+app.use('/', approveDelete);
+app.use('/',fetchPendingDeleteFolders);
+app.use('/',rejectDeleteFolder);
+app.use('/', findCreator);
+app.use('/', getParentName);
 
+// app.use('/', folderApproval);
 
 app.get('/', (req, res) => {
     res.send("home page");

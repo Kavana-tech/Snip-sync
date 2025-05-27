@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import DeleteFolder from "./DeleteFolder";
 import { useNavigate } from "react-router-dom";
 
-function CreateFolderCard({ allFolders, setFormCard, setAllFolders }) {
+function CreateFolderCard({ allFolders, setFormCard, setAllFolders, projectId }) {
     const [folderToDelete, setFolderToDelete] = useState(null);
     const navigate = useNavigate();
 
@@ -14,7 +14,7 @@ function CreateFolderCard({ allFolders, setFormCard, setAllFolders }) {
     return (
         <>
             {allFolders.length === 0 ? (
-                <div className="flex justify-center items-center h-[calc(100vh-10rem)]">
+                <div className="flex justify-center items-center h-[calc(100vh-18rem)]">
                     <div className="border-2 border-dashed border-white max-w-[400px] flex flex-col justify-center items-center h-[200px] w-full bg-gray-800 rounded-2xl">
                         <p>Create your folder</p><br />
                         <button
@@ -30,28 +30,40 @@ function CreateFolderCard({ allFolders, setFormCard, setAllFolders }) {
                     {allFolders.map((folder) => (
                         <div
                             key={folder._id}
-                            className="bg-gray-800 p-4 rounded-xl shadow-md border border-white/10 cursor-pointer transform transition-transform duration-200 hover:scale-105" 
+                            className="bg-gray-800 p-4 rounded-xl shadow-md border border-white/10 cursor-pointer transform transition-transform duration-200 hover:scale-105"
                         >
                             <div className="flex justify-between">
-                                <h2 className="text-xl font-semibold hover:underline" onClick={()=>navigate(`/files/${folder._id}`)}>{folder.folderName}</h2>
+                                <h2 className="text-xl font-semibold hover:underline" onClick={() => navigate(`/files/${folder._id}`)}>{folder.folderName}</h2>
                                 <Trash2
                                     className="text-red-600 cursor-pointer"
                                     onClick={() => setFolderToDelete(folder)}
                                 />
                             </div>
                             <p className="text-sm text-gray-400 mt-2">{folder.files?.length || 0} files</p>
+                            <div className="w-full flex justify-between bg-gray-700 text-gray-400 mt-4 p-4 rounded-sm">
+                                <p>Created by: {folder.createdBy}</p>
+                                <p>{new Date(folder.createdAt).toLocaleString('en-US', {
+                                    hour: 'numeric',
+                                    minute: 'numeric',
+                                    hour12: true,
+                                    day: 'numeric',
+                                    month: 'short',
+                                    year: 'numeric'
+                                })}</p>
+                            </div>
                         </div>
                     ))}
                 </div>
             )}
-            {folderToDelete && (
-                <DeleteFolder
-                    deleteFolder={folderToDelete}
-                    onClose={handleClose}
-                    allFolders={allFolders}
-                    setFolders={setAllFolders}
-                />
-            )}
+
+            <DeleteFolder
+                deleteFolder={folderToDelete}
+                onClose={handleClose}
+                allFolders={allFolders}
+                setFolders={setAllFolders}
+                projectId={projectId}
+            />
+
         </>
     );
 }

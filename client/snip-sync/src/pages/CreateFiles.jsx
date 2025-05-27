@@ -23,7 +23,7 @@ function CreateFiles() {
         socket.on("file-created", ({ folderId: incomingId, file }) => {
             if (incomingId === folderId) {
                 setFiles(prev => [...prev, file]);
-                toast.success(`New file "${file.fileName}" added by a teammate`);
+                toast.success(`New file "${file.fileName}" added`);
             }
         });
 

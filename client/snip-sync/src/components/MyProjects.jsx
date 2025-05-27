@@ -80,6 +80,7 @@ useEffect(() => {
                     description: '',
                     workingAs: ''
                 });
+                setAddCard(false);
                 toast.success(response.data.message);
             }
             catch (error) {
@@ -196,7 +197,7 @@ useEffect(() => {
                                 }
                                 <button
                                     type="submit"
-                                    className="bg-blue-500 hover:bg-blue-600 p-2 rounded font-semibold cursor-pointer" onClick={handleClose}
+                                    className="bg-blue-500 hover:bg-blue-600 p-2 rounded font-semibold cursor-pointer"
                                 >
                                     Add Project
                                 </button>

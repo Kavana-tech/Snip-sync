@@ -5,63 +5,8 @@ const invite = require('../models/inviteModel');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const project = require('../models/projectModel');
-const User = require('../models/userModel'); // renamed for clarity
+const User = require('../models/userModel');
 require('dotenv').config();
-
-// router.post('/processinvite', async (req, res) => {
-//     const { token } = req.body;
-//     const userToken = req.cookies.token;
-
-//     if (!userToken) {
-//         return res.json({ redirectTo: 'login' });
-//     }
-
-//     try {
-//         const decodedInfo = jwt.verify(userToken, process.env.JWT_SECRET);
-//         const userEmail = decodedInfo.email;
-
-//         const currentUser = await User.findOne({ email: userEmail });
-//         if (!currentUser) {
-//             return res.status(404).json({ message: "User not found" });
-//         }
-
-//         const invitation = await invite.findOne({ token });
-//         if (!invitation) {
-//             return res.status(404).json({ message: "Invitation not found" });
-//         }
-
-//         if (invitation.expiresAt && invitation.expiresAt < Date.now()) {
-//             return res.status(410).json({ message: "Link Expired" });
-//         }
-
-//         const relatedProject = await project.findOne({ inviteToken: token });
-//         if (!relatedProject) {
-//             return res.status(404).json({ message: "Project not found" });
-//         }
-
-//         const alreadyMember = relatedProject.teamMembers.some(
-//             member => member.email === currentUser.email
-//         );
-
-//         if (!alreadyMember) {
-//             relatedProject.teamMembers.push({
-//                 email: currentUser.email,
-//                 username: currentUser.username
-//             });
-//             await relatedProject.save();
-//         }
-
-//         res.json({
-//             redirectTo: 'dashboard',
-//             teamMembers: relatedProject.teamMembers
-//         });
-//     } catch (err) {
-//         console.error(err);
-//         res.status(500).json({ message: "Server error" });
-//     }
-// });
-
-// module.exports = router;
 
 router.post('/processinvite', async (req, res) => {
     const { token } = req.body;

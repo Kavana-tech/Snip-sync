@@ -10,28 +10,30 @@ router.use(cookieParser());
 
 router.post('/signup', async (req, res) => {
     try {
-        const {username, email, password } = req.body;
+        const { username, email, password } = req.body;
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
-        const userFound = await user.findOne({email});
-        if(!userFound)
-        {
-            const newUser = new user({username, email, password: hash });
-            const createdUser = await newUser.save();
-            let token = jwt.sign({email}, process.env.JWT_SECRET);
-            res.cookie("token", token, {
-                httpOnly: true,
-                secure: false, 
-                sameSite: 'Lax'  
-            });
-            console.log(token);
-            res.status(200).json({createdUser, message:"Signed up Successfully"});
+
+        const userFound = await user.findOne({ email });
+        if (userFound) {
+            return res.status(409).json({ message: "Email already exists!" });
         }
-        else
-        {
-            res.status(404).json({message:"User already Exits!"});
+
+        const usernameFound = await user.findOne({ username });
+        if (usernameFound) {
+            return res.status(409).json({ message: "This Username can't be taken! Try another" });
         }
-        
+
+        const newUser = new user({ username, email, password: hash });
+        const createdUser = await newUser.save();
+        let token = jwt.sign({ email }, process.env.JWT_SECRET);
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: false,
+            sameSite: 'Lax'
+        });
+        console.log(token);
+        res.status(200).json({ createdUser, message: "Signed up Successfully" });
     } catch (error) {
         console.log(error);
         console.log("Error while signing up!");

@@ -1,6 +1,7 @@
 const express = require('express');
 const authentication = require('../middleware/authentication');
 const project = require('../models/projectModel');
+const user = require('../models/userModel');
 const router = express.Router();
 
 router.post('/addproject', authentication, async(req, res) => {
@@ -8,11 +9,13 @@ router.post('/addproject', authentication, async(req, res) => {
         const {title, description, workingAs, inviteToken, teamMembers} = req.body;
         console.log(inviteToken)
         let newProject;
+        const userEmail = req.user.email;
+        const foundUser = await user.findOne({email: userEmail})
         if(workingAs === 'team')
-            newProject = new project({title, description, workingAs, createdBy: req.user.email, inviteToken, teamMembers});
+            newProject = new project({title, description, workingAs, createdBy: foundUser.username, inviteToken, teamMembers});
         else
         {
-            newProject = new project({title, description, workingAs, createdBy: req.user.email,});
+            newProject = new project({title, description, workingAs, createdBy: foundUser.username});
         }
         const createdProject = await newProject.save();
         res.status(200).json({message: "Project added successfully!", project: createdProject});

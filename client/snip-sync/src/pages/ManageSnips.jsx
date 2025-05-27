@@ -7,6 +7,7 @@ import { toast, Toaster } from 'react-hot-toast';
 import CreateFolderCard from "../components/CreateFolderCard";
 import { useParams } from "react-router-dom";
 import { useRef } from "react";
+import ApproveFolderDelete from "../components/ApproveFolderDelete";
 function ManageSnips() {
     const { projectId } = useParams();
     const [formCard, setFormCard] = useState(false);
@@ -16,6 +17,40 @@ function ManageSnips() {
         files: [],
     })
 
+    const [pendingDeletes, setPendingDeletes] = useState([]);
+    const fetched = useRef(false);
+    const [creator, setCreator] = useState('');
+
+    useEffect(() => {
+        async function findCreator(){
+            try {
+                const response = await axios.get(`http://localhost:8000/findcreator/${projectId}`, { withCredentials: true });
+                setCreator(response.data.creator);
+            } catch (error) {
+                console.error("Error fetching project creator:", error);
+                toast.error(error.response?.data?.message || "Failed to fetch project creator.");
+            }
+        }
+        findCreator();
+    }, [projectId]);
+
+    useEffect(() => {
+        if (fetched.current) return;
+        fetched.current = true;
+        async function fetchPendingDeletes() {
+            try {
+                const response = await axios.get(`http://localhost:8000/fetchpendingdeletefolders/${projectId}`, { withCredentials: true });
+                setPendingDeletes(response.data.pendingProjects);
+            }
+            catch (error) {
+                console.error("Error fetching pending delete folders:", error);
+                toast.error(error.response?.data?.message || "Failed to fetch pending delete folders.");
+            }
+        }
+        fetchPendingDeletes();
+    }, [projectId])
+
+
     const hasFetched = useRef(false);
     useEffect(() => {
         if (hasFetched.current) return
@@ -23,7 +58,7 @@ function ManageSnips() {
         async function getFolders() {
             const toastId = toast.loading("Loading projects...", { position: "top-center", duration: Infinity });
             try {
-                let response = await axios.get(`http://localhost:8000/getfolders/${projectId}`);
+                let response = await axios.get(`http://localhost:8000/getfolders/${projectId}`, {withCredentials: true});
                 console.log(response);
                 setAllFolders(response.data);
                 toast.dismiss(toastId);
@@ -42,7 +77,7 @@ function ManageSnips() {
     const handleCreateFolder = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`http://localhost:8000/createfolder/${projectId}`, folderData);
+            const response = await axios.post(`http://localhost:8000/createfolder/${projectId}`, folderData, { withCredentials: true });
             if (response.status === 200) {
                 setAllFolders((prev) => [...prev, response.data.createdFolder]);
                 setFolderData({ folderName: '', files: [] });
@@ -73,8 +108,11 @@ function ManageSnips() {
                             <div className="flex justify-center items-center text-white">Create Folder <FolderPlus className="ml-2 font-semibold" /></div>
                         </button>
                     </div>
+                    {creator && (
+                        <ApproveFolderDelete pendingProjects={pendingDeletes} setPendingProjects={setPendingDeletes} projectId={projectId} />
+                    )}
 
-                    <CreateFolderCard allFolders={allFolders} setFormCard={setFormCard} setAllFolders={setAllFolders} />
+                    <CreateFolderCard allFolders={allFolders} setFormCard={setFormCard} setAllFolders={setAllFolders} projectId={projectId} />
 
                     <AnimatePresence>
                         {formCard &&
@@ -102,6 +140,7 @@ function ManageSnips() {
                             </motion.div>
                         }
                     </AnimatePresence>
+                    
                 </div>
             </div>
         </div>

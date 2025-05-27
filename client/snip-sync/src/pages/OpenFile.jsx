@@ -7,7 +7,7 @@ import axios from "axios";
 import { toast, Toaster } from 'react-hot-toast';
 import { diffWords } from 'diff';
 import { socket } from "../socket";
-
+import TagSelectField from "../components/TagSelectField";
 const renderDiff = (oldText, newText) => {
     const diff = diffWords(oldText || "", newText || "");
     return diff.map((part, index) => {
@@ -36,6 +36,11 @@ const OpenFile = () => {
     const [parentId, setParentId] = useState(null);
     const [tag, setTag] = useState([]);
     const [snippetName, setSnippetName] = useState('');
+    const [description, setDescription] = useState('');
+    const [parentName, setParentName] = useState('');
+    const [filterType, setFilterType] = useState('');
+    const [filterValue, setFilterValue] = useState('');
+    const [filteredSnippets, setFilteredSnippets] = useState([])
 
     useEffect(() => {
 
@@ -69,7 +74,10 @@ const OpenFile = () => {
         };
     }, [file._id]);
 
-
+    useEffect(() => {
+        if(!filterType || !filterValue)
+            setFilteredSnippets(snippets);
+    }, [snippets, filterType, filterValue])
 
     useEffect(() => {
         const fetchSnippets = async () => {
@@ -83,6 +91,23 @@ const OpenFile = () => {
         fetchSnippets();
     }, [file._id]);
 
+    const getFilterOptions = () => {
+        if (filterType === 'tag') {
+            const tags = snippets.flatMap(s => s.tags || []);
+            return [...new Set(tags)];
+        }
+        if (filterType === "author") {
+            return [...new Set(snippets.map(s => s.author))];
+        }
+        if (filterType === "name") {
+            return [...new Set(snippets.map(s => s.snippetName))];
+        }
+        if (filterType === "date") {
+            return [...new Set(snippets.map(s => new Date(s.createdAt).toISOString().slice(0, 10)))];
+        }
+        return [];
+    }
+
     const handleAddSnippet = async () => {
         try {
             const res = await axios.post("http://localhost:8000/addsnippet", {
@@ -90,6 +115,7 @@ const OpenFile = () => {
                 content: snippetContent,
                 snippetName,
                 tags: tag,
+                description,
                 parentId: parentId || null
             }, { withCredentials: true });
 
@@ -98,6 +124,7 @@ const OpenFile = () => {
             setParentId(null);
             setTag('');
             setSnippetName('');
+            setDescription('');
             setCreateCard(false);
             setSnippets([...snippets, res.data.snippet]);
         } catch (error) {
@@ -106,10 +133,16 @@ const OpenFile = () => {
         }
     };
 
+    const getParentName = async (parentId) => {
+        const parent = await axios.get(`http://localhost:8000/getparentname/${parentId}`);
+        setParentName(parent.data.parentName);
+    }
+
 
     const handleFork = (id) => {
         setParentId(id);
         setCreateCard(true);
+        getParentName(id)
         window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
     }
 
@@ -133,6 +166,24 @@ const OpenFile = () => {
         })
     }
 
+    const handleSearch = () => {
+        if (!filterType || !filterValue) {
+            setFilteredSnippets(snippets);
+            return;
+        }
+        let filtered = [];
+        if (filterType === "tag") {
+            filtered = snippets.filter(s => (s.tags || []).includes(filterValue));
+        } else if (filterType === "author") {
+            filtered = snippets.filter(s => s.author === filterValue);
+        } else if (filterType === "name") {
+            filtered = snippets.filter(s => s.snippetName === filterValue);
+        } else if (filterType === "date") {
+            filtered = snippets.filter(s => new Date(s.createdAt).toISOString().slice(0, 10) === filterValue);
+        }
+        setFilteredSnippets(filtered);
+    }
+
 
     return (
         <div>
@@ -145,7 +196,7 @@ const OpenFile = () => {
                         <button className="bg-cyan-900 text-xl font-medium px-4 py-0 mt-2 rounded-sm cursor-pointer">Visualize</button>
                     </div>
 
-                    <div className="w-full bg-black/30 mb-4 px-4 py-2 flex items-center gap-4">
+                    <div className="w-full bg-black/30 mb-4 px-4 py-2  items-center gap-4 flex justify-between">
                         <div className="flex items-center text-white gap-2">
                             <span className="font-semibold">Filter</span>
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -153,31 +204,35 @@ const OpenFile = () => {
                             </svg>
                         </div>
                         <select
-                            className="bg-gray-800 border border-gray-600 text-white p-2 rounded-md"
-                           
-                            
+                            className="bg-gray-800 border border-gray-600 text-white  p-2 rounded-md w-2xs" value={filterType} onChange={e => {
+                                setFilterType(e.target.value);
+                                setFilterValue('');
+                            }}
                         >
-                            <option value="">Select filter by</option>
+                            <option value="">Filter by...</option>
                             <option value="name">Snippet Name</option>
                             <option value="tag">Tag</option>
+                            <option value="author">Author</option>
                             <option value="date">Created Date</option>
                         </select>
-                        <input
-                            type="text"
-                            className="bg-gray-800 border border-gray-600 text-white p-2 rounded-md"
-                            placeholder="Enter search term"
-                            
-                        />
+                        <select className="bg-gray-800 border border-gray-600 text-white  p-2 rounded-md w-2xs"
+                            value={filterValue}
+                            onChange={e => setFilterValue(e.target.value)}>
+                            <option value="">Select...</option>
+                            {getFilterOptions().map(opt => (
+                                <option key={opt} value={opt}>{opt}</option>
+                            ))}
+                        </select>
                         <button
-                            className="bg-cyan-900 text-white px-4 py-2 rounded-sm"
-                            
+                            className="bg-cyan-900 text-white px-4 py-2 rounded-sm cursor-pointer" onClick={handleSearch}
+
                         >
                             Search
                         </button>
                     </div>
 
 
-                    {snippets.length === 0 ? (
+                    {filteredSnippets.length === 0 ? (
                         <div className="flex justify-center items-center h-[calc(100vh-10rem)]">
                             <div className="border-2 border-dashed border-white max-w-[400px] flex flex-col justify-center items-center h-[200px] w-full bg-gray-800 rounded-2xl">
                                 <p className="text-center">
@@ -195,7 +250,7 @@ const OpenFile = () => {
                     ) : (
                         <div className="p-4">
                             <h2 className="text-xl font-bold mb-4">Snippets</h2>
-                            {snippets.map((snippet, index) => {
+                            {filteredSnippets.map((snippet, index) => {
                                 const parentSnippet = snippets.find(s => s._id === snippet.parentId);
                                 const siblingVersions = snippets.filter(s => s.parentId === snippet.parentId);
                                 const versionNumber = snippet.parentId ? siblingVersions.findIndex(s => s._id === snippet._id) + 1 : 1;
@@ -212,20 +267,25 @@ const OpenFile = () => {
                                             <div className="flex">
                                                 <button title="Copy Current Code" onClick={() => handleCopySnippet(snippet.content)}><Copy className="text-gray-500 cursor-pointer" /></button>
                                                 <button className="text-red-600 ml-4 cursor-pointer" onClick={() => handleDeleteSnippet(snippet._id)}>Delete</button>
-                                                <button className="text-blue-600 ml-4 cursor-pointer" onClick={() => handleFork(snippet._id)}>Fork</button>
+                                                <button className="text-blue-400 ml-4 cursor-pointer" onClick={() => handleFork(snippet._id)}>Fork</button>
                                             </div>
                                         </div>
 
-                                        <pre className="whitespace-pre-wrap bg-black p-2 mt-2">
+                                        <pre className="whitespace-pre-wrap bg-black p-2 mt-2 rounded-md">
                                             {snippet.parentId && parentSnippet
                                                 ? renderDiff(parentSnippet.content, snippet.content)
                                                 : snippet.content}
                                         </pre>
+                                        <div className="mt-2 text-gray-400 bg-black/30 p-2 rounded-md">
+                                            <p>Description: {snippet.description}</p>
+                                        </div>
                                         <div className="mt-2 flex flex-wrap justify-between text-sm text-gray-400">
                                             <p>Tags: {snippet.tags && snippet.tags.length > 0 ? snippet.tags.join(', ') : 'No tags'}</p>
                                             <p>Created At: {new Date(snippet.createdAt).toLocaleString()}</p>
                                             <p className="bg-cyan-900 rounded-xl px-4 text-white">Created By: {snippet.author}</p>
                                         </div>
+
+
                                     </div>
                                 );
                             })}
@@ -234,21 +294,35 @@ const OpenFile = () => {
                     )}
 
 
-                    <div className="fixed bottom-0 left-[250px] w-full bg-gray-800 border-t border-gray-700 flex px-4 py-3 z-10">
+                    <div
+                        className="fixed bottom-0"
+                        style={{
+                            left: "220px", // matches your sidebar width
+                            width: "calc(100% - 220px - 1rem)", // 1rem for right-4
+                            background: "#000",
+                            borderTop: "1px solid #374151",
+                            zIndex: 10,
+                            padding: "0.75rem 1rem"
+                        }}
+                    >
                         {createCard && (
                             <div className="w-full m-4">
                                 <div className="flex flex-col">
                                     <div className="flex mb-4 gap-4">
                                         <input type="text" value={snippetName} placeholder="Enter the Name of Your Snippet" onChange={(e) => setSnippetName(e.target.value)} className="border-2 mt-2 border-gray-700 max-w-[300px] w-full p-2 rounded-md" />
-                                        <input type="text" value={tag} placeholder="Enter the tag" onChange={(e) => setTag(e.target.value)} className="border-2 mt-2 border-gray-700 max-w-[300px] w-full p-2 rounded-md" />
+
+
+
+                                        <input type="text" value={description} placeholder="Enter the description" onChange={(e) => setDescription(e.target.value)} className="border-2 mt-2 border-gray-700 w-full p-2 rounded-md" />
                                     </div>
 
                                     <textarea
                                         placeholder="Enter your Snippet"
-                                        className="border-2 border-gray-700 max-w-[900px] w-full p-2 rounded-md"
+                                        className="border-2 border-gray-700 w-full p-2 rounded-md"
                                         value={snippetContent}
                                         onChange={(e) => setSnippetContent(e.target.value)}
                                     ></textarea>
+                                    <TagSelectField value={tag} onChange={setTag} />
                                     <div className="flex gap-6">
                                         <button
                                             className="bg-cyan-900 p-2 mt-4 font-medium text-xl min-w-[300px] rounded-sm cursor-pointer"
@@ -266,7 +340,7 @@ const OpenFile = () => {
 
                                 {parentId && (
                                     <p className="text-white font-medium mt-2">
-                                        Creating a new version from parent snippet ID: {parentId}
+                                        Creating a new version from parent : {parentName}
                                     </p>
                                 )}
                             </div>

@@ -17,7 +17,7 @@ function ProjectCard({ project, allProjects, setProjects, inviteLink }) {
 
     return (
         <div>
-            
+
             {editProjectInfo && (
                 <EditProject
                     editProject={project} onClose={handleClose} setProjects={setProjects} invite={inviteLink}
@@ -25,9 +25,9 @@ function ProjectCard({ project, allProjects, setProjects, inviteLink }) {
 
             )}
             {deleteProjectInfo && <DeleteProject deleteProject={project} onClose={handleClose} allProjects={allProjects} setProjects={setProjects} />}
-            <div className=" min-w-[500px] w-full max-w-[500px]  ml-12 mr-12 mt-6 flex flex-col justify-center rounded-md bg-gray-800">
+            <div className=" min-w-[550px] w-full max-w-[550px]  ml-12 mr-12 mt-6 flex flex-col justify-center rounded-md bg-gray-800">
                 <div className="w-full bg-gray-700 text-gray-400 flex justify-between p-4 top-0 rounded-sm">
-                    <p>{project.workingAs} Development</p>
+                    <p className="capitalize">{project.workingAs} Development</p>
                     <p>{new Date(project.createdAt).toLocaleString('en-US', {
                         hour: 'numeric',
                         minute: 'numeric',
@@ -46,9 +46,6 @@ function ProjectCard({ project, allProjects, setProjects, inviteLink }) {
 
                     <p className="mt-4 truncate">{project.description}</p>
                 </div>
-                <div className="w-full px-4 mb-4">
-
-                </div>
                 <div className="flex justify-between w-full text-[18px] p-4">
                     <button className="font-medium bg-cyan-900 p-2 rounded-md cursor-pointer">
                         Add Member
@@ -56,7 +53,9 @@ function ProjectCard({ project, allProjects, setProjects, inviteLink }) {
 
                     <button title="Delete" className="text-red-500 flex gap-1 items-center cursor-pointer" onClick={() => setDeleteProjectInfo(true)}>Delete<Trash2 className="h-4 w-4" /></button>
                 </div>
-
+                <div className="w-full bg-gray-700 text-gray-400 mt-4 p-4 rounded-sm">
+                    <p>Created by: {project.createdBy}</p>
+                </div>
 
             </div>
         </div>
