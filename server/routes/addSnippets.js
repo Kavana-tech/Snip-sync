@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 router.post('/addsnippet', authentication, async (req, res) => {
-    const { fileId, content, snippetName, parentId, tags } = req.body;
+    const { fileId, content, snippetName, parentId, tags, description, createdAt } = req.body;
     const userToken = req.cookies.token;
     const decoded = jwt.verify(userToken, process.env.JWT_SECRET);
     const currentUser = await user.findOne({ email: decoded.email });
@@ -22,6 +22,8 @@ router.post('/addsnippet', authentication, async (req, res) => {
             fileId,
             content,
             snippetName,
+            description,
+            createdAt,
             parentId: parentId || null,
             tags: tags || [],
             author

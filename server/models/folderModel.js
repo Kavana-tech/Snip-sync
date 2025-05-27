@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { create } = require('./projectModel');
 
 const fileSchema = new mongoose.Schema({
     fileName: {
@@ -30,6 +31,10 @@ const folderSchema = new mongoose.Schema({
             ref: 'projects',
             required: true
         },
+    createdBy: {
+        type: String,
+        required: true
+    }
 });
 
 const folder = mongoose.model('folder', folderSchema)

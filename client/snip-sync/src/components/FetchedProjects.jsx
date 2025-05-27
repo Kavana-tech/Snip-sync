@@ -2,12 +2,11 @@ import React from "react";
 import ProjectCard from "./ProjectCard";
 import DashProjectCard from "./DashProjectCard";
 function FetchedProjects({ projects, setProjects, invite }) {
-    console.log(invite);
     const displayProjectCard = projects && setProjects && invite;
     const displayDashboardProjectCard = projects && (!setProjects || !invite);
     return (
         <div>
-            {displayProjectCard && (<div className="flex flex-wrap gap-6">
+            {displayProjectCard && (<div className="grid grid-cols-2 gap-6">
                 {projects.length > 0 ? (
                     projects.map((project, index) => (
                         <ProjectCard key={index} project={project} allProjects={projects} setProjects={setProjects} inviteLink={invite} />

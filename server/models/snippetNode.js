@@ -8,6 +8,7 @@ const snippetNodeSchema = new mongoose.Schema({
     },
     snippetName: {
         type: String,
+        required: true,
     },
     content: {
         type: String,
@@ -33,6 +34,10 @@ const snippetNodeSchema = new mongoose.Schema({
     branch: {
         type: String,
         default: 'main'
+    },
+    description:{
+        type: String,
+        required: true
     }
 });
 

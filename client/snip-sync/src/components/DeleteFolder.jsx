@@ -2,16 +2,38 @@ import React from "react";
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from "axios";
 import { toast, Toaster } from 'react-hot-toast';
+import { useEffect } from "react";
+import { socket } from '../socket'
+import { useState } from "react";
+import { useRef } from "react";
+import ApproveFolderDelete from "./ApproveFolderDelete";
 
-function DeleteFolder({ deleteFolder, onClose, allFolders, setFolders }) {
+
+function DeleteFolder({ deleteFolder, onClose, allFolders, setFolders, projectId }) {
+
+    useEffect(() => {
+
+        const handleFolderDeleted = ({ projectId: deletedProjectId, folderId }) => {
+            if (deletedProjectId === projectId) {
+                setFolders(prev => prev.filter(folder => folder._id !== folderId));
+            }
+        };
+
+        socket.on("folder-deleted", handleFolderDeleted);
+
+        return () => {
+            socket.off("folder-deleted", handleFolderDeleted);
+        };
+    }, [projectId, setFolders]);
+    
     if (!deleteFolder) return null;
-
+    
     const handleDeleteFolder = async () => {
         try {
-            const response = await axios.delete(`http://localhost:8000/deletefolder/${deleteFolder._id}`);
-            toast.success(response.data.message);
+            const response = await axios.delete(`http://localhost:8000/deletefolder/${projectId}/${deleteFolder._id}`, { withCredentials: true });
+            toast.success(response.data.message || "Delete request submitted for approval.");
 
-            setFolders(allFolders.filter((folder) => folder._id !== deleteFolder._id));
+            //setFolders(allFolders.filter((folder) => folder._id !== deleteFolder._id));
             onClose();
         } catch (error) {
             console.log(error);
@@ -21,7 +43,7 @@ function DeleteFolder({ deleteFolder, onClose, allFolders, setFolders }) {
 
     return (
         <>
-            <Toaster toastOptions={{ style: { background: '#1F2937', color: 'white' } }} />
+            <Toaster toastOptions={{ duration: 1000, style: { background: '#1F2937', color: 'white' } }} />
             <AnimatePresence>
                 {deleteFolder && (
                     <motion.div
@@ -47,7 +69,9 @@ function DeleteFolder({ deleteFolder, onClose, allFolders, setFolders }) {
                         </motion.div>
                     </motion.div>
                 )}
+
             </AnimatePresence>
+           
         </>
     );
 }

@@ -17,15 +17,24 @@ const projectSchema = new mongoose.Schema({
     },
     createdBy: {
         type: String,
-        required : true
+        required: true
     },
     inviteToken: {
-        type:String
+        type: String
     },
-   teamMembers: [{
-  email: { type: String },
-  username: { type: String}
-}]
+    pendingDeleteFolders: [{
+        folderId: { type: mongoose.Schema.Types.ObjectId, ref: 'folder' },
+        requestedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' }
+    }],
+    folders: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'folder'
+    }],
+    teamMembers: [{
+        email: { type: String },
+        username: { type: String }
+    }]
 
 })
 
