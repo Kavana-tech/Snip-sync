@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Sidebar from '../components/Sidebar';
 import axios from 'axios';
-import { FaUserCircle } from 'react-icons/fa';
+import { FaUserCircle, FaCamera } from 'react-icons/fa';
 
 function Profile() {
   const [formData, setFormData] = useState({
@@ -16,10 +16,13 @@ function Profile() {
   });
 
   const [image, setImage] = useState('');
+  const [preview, setPreview] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [passwords, setPasswords] = useState({ current: '', new: '' });
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     async function getUser() {
@@ -46,15 +49,24 @@ function Profile() {
 
   const handleImage = async (e) => {
     const file = e.target.files[0];
-    const form = new FormData();
-    form.append("image", file);
-    let res = await axios.post("http://localhost:8000/upload", form, { withCredentials: true });
-    setImage(res.data.url);
+    if (file) {
+      setPreview(URL.createObjectURL(file));
+      const form = new FormData();
+      form.append("image", file);
+      try {
+        let res = await axios.post("http://localhost:8000/upload", form, { withCredentials: true });
+        setImage(res.data.url);
+      } catch (err) {
+        alert("Image upload failed");
+      }
+      setPreview('');
+    }
   };
 
   const deleteImage = async () => {
     await axios.post("http://localhost:8000/deleteprofilepic", {}, { withCredentials: true });
     setImage("");
+    setPreview('');
   };
 
   const handleSave = async (e) => {
@@ -74,22 +86,38 @@ function Profile() {
       <div className="p-6 bg-gray-900 min-h-screen w-full text-white">
         <h2 className="text-3xl font-bold mb-6">Profile</h2>
 
-        {/* Profile Picture Upload */}
         <div className="mb-6 flex items-center gap-4">
-          {image ? (
-            <img src={image} alt="Profile" className="w-24 h-24 rounded-full object-cover border-2 border-white" />
-          ) : (
-            <div className="w-24 h-24 rounded-full flex items-center justify-center bg-gray-700 text-white text-4xl">
-              <FaUserCircle />
-            </div>
-          )}
+          <div className="relative group w-24 h-24">
+            {preview ? (
+              <img src={preview} alt="Preview" className="w-24 h-24 rounded-full object-cover border-2 border-blue-400" />
+            ) : image ? (
+              <img src={image} alt="Profile" className="w-24 h-24 rounded-full object-cover border-2 border-white" />
+            ) : (
+              <div className="w-24 h-24 rounded-full flex items-center justify-center bg-gray-700 text-white text-4xl">
+                <FaUserCircle />
+              </div>
+            )}
+            {/* Camera icon overlay */}
+            <button
+              type="button"
+              onClick={() => fileInputRef.current.click()}
+              className="absolute bottom-2 right-2 bg-blue-600 p-2 rounded-full shadow-lg hover:bg-blue-700 transition-colors duration-150 flex items-center justify-center group-hover:scale-110"
+              style={{ border: '2px solid white' }}
+              aria-label="Upload Photo"
+            >
+              <FaCamera className="text-white text-lg" />
+            </button>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleImage}
+              className="hidden"
+              accept="image/*"
+            />
+          </div>
           <div className="space-y-2">
-            <label className="cursor-pointer bg-gray-600 px-4 py-2 rounded hover:bg-gray-700 text-sm">
-              Upload Profile Photo
-              <input type="file" onChange={handleImage} className="hidden" />
-            </label>
-            {image && (
-              <button onClick={deleteImage} className="bg-red-600 px-4 py-2 text-sm rounded hover:bg-red-700">
+            {(image || preview) && (
+              <button onClick={deleteImage} className="bg-red-600 px-4 py-2 text-sm rounded hover:bg-red-700 transition-colors duration-150">
                 Remove Photo
               </button>
             )}
@@ -119,7 +147,7 @@ function Profile() {
             ))}
             <div className="flex gap-4">
               <button type="submit" className="bg-blue-600 px-4 py-2 rounded hover:bg-blue-700">Save</button>
-              <button type="button" onClick={() => setIsEditing(false)} className="bg-gray-600 px-4 py-2 rounded hover:bg-gray-700">Cancel</button>
+              <button type="button" onClick={() => { setIsEditing(false); setPreview(''); }} className="bg-gray-600 px-4 py-2 rounded hover:bg-gray-700">Cancel</button>
             </div>
           </form>
         ) : (
