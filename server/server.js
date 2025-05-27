@@ -103,7 +103,7 @@ app.use('/',fetchPendingDeleteFolders);
 app.use('/',rejectDeleteFolder);
 app.use('/', findCreator);
 app.use('/', getParentName);
-app.use('/api/projects', projectsApi);
+app.use('/', projectsApi);
 // app.use('/', folderApproval);
 
 app.get('/', (req, res) => {

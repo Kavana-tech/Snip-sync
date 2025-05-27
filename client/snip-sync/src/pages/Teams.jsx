@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
+import axios from 'axios';
 
 function Teams() {
   const [projects, setProjects] = useState([]);
@@ -12,16 +13,19 @@ function Teams() {
   const [adding, setAdding] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/projects')
-      .then(res => res.json())
-      .then(data => {
-        setProjects(data);
+    async function fetchProjects() {
+      try {
+        let res = await axios.get('http://localhost:8000/api/projects');
+        setProjects(res.data);
         setLoading(false);
-      })
-      .catch(() => {
+      }
+      catch (error) {
         setError('Failed to load projects. Please try again later.');
         setLoading(false);
-      });
+      }
+    }
+    fetchProjects();
+
   }, [adding]);
 
   const projectObj = projects.find(p => p.title === selectedProject);

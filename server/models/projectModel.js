@@ -1,12 +1,7 @@
 const mongoose = require('mongoose');
 
-const teamSchema = new mongoose.Schema({
-  name: String,
-  members: [String]
-});
-
 const projectSchema = new mongoose.Schema({
-<<<<<<< HEAD
+
     title: {
         type: String,
         required: true,
@@ -42,32 +37,7 @@ const projectSchema = new mongoose.Schema({
         email: { type: String },
         username: { type: String }
     }]
-=======
-  title: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  description: String,
-  workingAs: {
-    type: String,
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  createdBy: {
-    type: String,
-    required: true
-  },
-  inviteToken: String,
-  teamMembers: [{
-    email: { type: String },
-    username: { type: String }
-  }],
-  teams: [teamSchema] // <-- Add this line for Teams support
-});
->>>>>>> origin/features/teams-section
+  })
 
-module.exports = mongoose.model("Project", projectSchema);
+const project = mongoose.model("project", projectSchema);
+module.exports = project;

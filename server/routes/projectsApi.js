@@ -1,11 +1,12 @@
 const express = require('express');
+const project = require('../models/projectModel');
 const router = express.Router();
-const Project = require('../models/projectModel'); // Make sure this model exists
+
 
 // Get all projects (with teams)
-router.get('/', async (req, res) => {
+router.get('/api/projects', async (req, res) => {
   try {
-    const projects = await Project.find();
+    const projects = await project.find();
     res.json(projects);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch projects' });
@@ -16,11 +17,11 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   const { projectName, team } = req.body;
   try {
-    const project = await Project.findOne({ title: projectName });
-    if (!project) return res.status(404).json({ error: 'Project not found' });
-    project.teams.push(team);
-    await project.save();
-    res.status(201).json({ message: 'Team added', project });
+    const projectFound = await project.findOne({ title: projectName });
+    if (!projectFound) return res.status(404).json({ error: 'Project not found' });
+    projectFound.teams.push(team);
+    await projectFound.save();
+    res.status(201).json({ message: 'Team added', projectFound });
   } catch (err) {
     res.status(500).json({ error: 'Failed to add team' });
   }
