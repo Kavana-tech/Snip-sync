@@ -78,7 +78,8 @@ useEffect(() => {
                 setProjectData({
                     title: '',
                     description: '',
-                    workingAs: ''
+                    workingAs: '',
+                    inviteLink: ''  
                 });
                 setAddCard(false);
                 toast.success(response.data.message);

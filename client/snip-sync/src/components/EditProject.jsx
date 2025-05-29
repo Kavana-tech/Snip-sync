@@ -8,20 +8,22 @@ function EditProject({ editProject, onClose, setProjects, invite }) {
     const [inviteBtn, setInviteBtn] = useState(true);
     const [errors, setErrors] = useState({});
     const [editCard, setEditCard] = useState(true);
+    const [inviteLink, setInviteLink] = useState(`http://localhost:5173/${editProject.inviteToken}`);
     const [projectData, setProjectData] = useState({
         title: editProject.title,
         description: editProject.description,
         workingAs: editProject.workingAs,
+        inviteToken: ''
     })
 
-    
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setProjectData((prev) => ({ ...prev, [name]: value }));
 
         if (name === "workingAs" && value === "team") {
             setInviteBtn(true);
-        } else if (name === "workingAs") {
+        } else if (name === "workingAs" && value === "solo") {
             setInviteBtn(false);
         }
     };
@@ -51,12 +53,25 @@ function EditProject({ editProject, onClose, setProjects, invite }) {
     }
 
     const handleCopy = () => {
-        navigator.clipboard.writeText(invite).then(() => {
+        navigator.clipboard.writeText(inviteLink).then(() => {
             toast.success("Link Copied");
         }).catch(error => {
             console.log(error);
             toast.error("Can't Copy Link");
         })
+    }
+    const handleGenerateInviteLink = async () => {
+        try {
+            let response = await axios.post("http://localhost:8000/generateinvite", { projectId: editProject._id}, { withCredentials: true });
+            let link = `http://localhost:5173/invite?token=${response.data}`
+            setProjectData({ ...projectData, inviteToken: response.data });
+            setInviteLink(link);
+            localStorage.setItem('invite', link);
+            //setInviteLinkInput(true);
+        }
+        catch (error) {
+            console.log(error);
+        }
     }
     return (
         <div>
@@ -108,12 +123,12 @@ function EditProject({ editProject, onClose, setProjects, invite }) {
                                 <option value="team">Team</option>
                             </select>
                             {errors.workingAs && <p className="text-red-500 text-sm">{errors.workingAs}</p>}
-                            {inviteBtn &&
+                            {projectData.workingAs === 'team' &&
                                 <div>
-                                    <button type="button" className="bg-blue-500 hover:bg-blue-600 p-2 rounded font-semibold cursor-pointer">
+                                    <button type="button" className="bg-blue-500 hover:bg-blue-600 p-2 rounded font-semibold cursor-pointer" onClick={handleGenerateInviteLink}>
                                         Invite Team</button><br />
                                     <div className="flex gap-4 items-center justify-center">
-                                        <input type="text" value={invite} className="p-2 mt-4 w-full rounded bg-gray-700 text-white outline-0 focus:ring-2 focus:ring-cyan-400 cursor-pointer" readOnly />
+                                        <input type="text" value={inviteLink} className="p-2 mt-4 w-full rounded bg-gray-700 text-white outline-0 focus:ring-2 focus:ring-cyan-400 cursor-pointer" readOnly />
                                         <Link className="mt-4 cursor-pointer" onClick={handleCopy} />
                                     </div>
                                 </div>

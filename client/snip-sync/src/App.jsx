@@ -12,6 +12,7 @@ import ProjectDetails from "./pages/ProjectDetails";
 import ManageSnip from "./pages/ManageSnips";
 import CreateFiles from "./pages/CreateFiles";
 import OpenFile from "./pages/OpenFile";
+import Teams from "./pages/Teams";
 function App() {
   return (
     <BrowserRouter>
@@ -29,6 +30,8 @@ function App() {
         <Route path="/managesnips/:projectId" element={<ManageSnip/>}></Route>
         <Route path="/files/:folderId" element={<CreateFiles />}></Route>
         <Route path="/openfile" element={<OpenFile />}></Route>
+        <Route path="/teams" element={<Teams />}></Route>
+
       </Routes>
     </BrowserRouter>
   );

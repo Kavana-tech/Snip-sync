@@ -7,8 +7,7 @@ import { Folders, Home, LayoutDashboard, LogOut, Settings, User, Users } from "l
 
 function Sidebar() {
   const navigate = useNavigate();
-  const [showTeamsDropdown, setShowTeamsDropdown] = useState(false);
-  const [expandedProjects, setExpandedProjects] = useState({});
+
   
   const handleLogout = async () => {
     try {
@@ -65,7 +64,7 @@ function Sidebar() {
         </NavLink>
         </li>
 
-        <li><NavLink to={'/'}
+        <li><NavLink to={'/teams'}
           className={({ isActive }) =>
             `block py-2 px-6 rounded-md transition-colors duration-200 ${isActive ? 'bg-gray-700 text-cyan-400' : 'text-white hover:bg-gray-700 hover:text-cyan-400'
             }`

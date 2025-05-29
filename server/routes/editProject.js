@@ -5,8 +5,8 @@ const router = express.Router();
 router.post('/editproject/:id', async (req, res) => {
     try{
         const {id} = req.params;
-        const {title, description, workingAs} = req.body;
-        const updatedProject = await project.findByIdAndUpdate(id, { title, description, workingAs });
+        const {title, description, workingAs, inviteToken} = req.body;
+        const updatedProject = await project.findByIdAndUpdate(id, { title, description, workingAs, inviteToken });
         if(!updatedProject)
         {
             return res.status(404).json({message: "Project can't be updated"});
