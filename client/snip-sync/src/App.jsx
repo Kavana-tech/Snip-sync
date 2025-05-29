@@ -30,7 +30,8 @@ function App() {
         <Route path="/managesnips/:projectId" element={<ManageSnip/>}></Route>
         <Route path="/files/:folderId" element={<CreateFiles />}></Route>
         <Route path="/openfile" element={<OpenFile />}></Route>
-        <Route path="/teams" element={<Teams/>}></Route>
+        <Route path="/teams" element={<Teams />}></Route>
+
       </Routes>
     </BrowserRouter>
   );

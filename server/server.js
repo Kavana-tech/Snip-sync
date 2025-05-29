@@ -74,7 +74,7 @@ const fetchPendingDeleteFolders = require('./routes/fetchPendingDeleteFolders');
 const rejectDeleteFolder = require('./routes/rejectDeleteFolder');
 const findCreator = require('./routes/findCreator');
 const getParentName = require('./routes/getParentName');
-const projectsApi = require('./routes/projectsApi');
+const addMember = require('./routes/addMember');
 
 app.use('/', signup);
 app.use('/', logout);
@@ -103,7 +103,8 @@ app.use('/',fetchPendingDeleteFolders);
 app.use('/',rejectDeleteFolder);
 app.use('/', findCreator);
 app.use('/', getParentName);
-app.use('/', projectsApi);
+app.use('/', addMember);
+
 // app.use('/', folderApproval);
 
 app.get('/', (req, res) => {

@@ -6,7 +6,7 @@ function DashProjectCard({ project }) {
     return (
         <div>
 
-            <div className=" min-w-[550px] w-full max-w-[550px] cursor-pointer ml-12 mr-12 mt-6 flex flex-col justify-center rounded-md items-center bg-gray-800">
+            <div className=" min-w-[530px] w-full max-w-[550px] cursor-pointer ml-12 mr-12 mt-6 flex flex-col justify-center rounded-md items-center bg-gray-800">
                 <div className="w-full bg-gray-700 text-gray-400 flex justify-between p-4 rounded-sm">
                     <p className="capitalize">{project.workingAs} Development</p>
                     <p>{new Date(project.createdAt).toLocaleString('en-US', {

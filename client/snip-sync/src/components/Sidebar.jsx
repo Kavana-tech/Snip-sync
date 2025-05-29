@@ -7,8 +7,7 @@ import { Folders, Home, LayoutDashboard, LogOut, Settings, User, Users } from "l
 
 function Sidebar() {
   const navigate = useNavigate();
-  const [showTeamsDropdown, setShowTeamsDropdown] = useState(false);
-  const [expandedProjects, setExpandedProjects] = useState({});
+
   
   const handleLogout = async () => {
     try {
