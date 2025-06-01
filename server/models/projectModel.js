@@ -29,7 +29,7 @@ const projectSchema = new mongoose.Schema({
     email: { type: String },
     username: { type: String }
   }],
-  teams: [teamSchema] // <-- Add this line for Teams support
+  teams: [teamSchema] // this line for Teams support
 });
 
 module.exports = mongoose.model("Project", projectSchema);

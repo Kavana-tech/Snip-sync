@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Project = require('../models/projectModel'); // Make sure this model exists
+const Project = require('../models/projectModel'); 
 
 // Get all projects (with teams)
 router.get('/', async (req, res) => {

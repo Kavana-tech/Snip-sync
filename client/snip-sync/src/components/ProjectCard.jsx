@@ -2,7 +2,8 @@ import { Pencil, Trash2 } from "lucide-react";
 import React, { useState } from "react";
 import EditProject from "./EditProject";
 import DeleteProject from "./DeleteProject";
-
+import { FaCode } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 function ProjectCard({ project, allProjects, setProjects, inviteLink }) {
     const [editProjectInfo, setEditProjectInfo] = useState(false);
@@ -14,15 +15,14 @@ function ProjectCard({ project, allProjects, setProjects, inviteLink }) {
         setEditProjectInfo(false);
         setDeleteProjectInfo(false);
     }
+    const navigate = useNavigate();
 
     return (
         <div>
-            
             {editProjectInfo && (
                 <EditProject
                     editProject={project} onClose={handleClose} setProjects={setProjects} invite={inviteLink}
                 />
-
             )}
             {deleteProjectInfo && <DeleteProject deleteProject={project} onClose={handleClose} allProjects={allProjects} setProjects={setProjects} />}
             <div className=" min-w-[500px] w-full max-w-[500px]  ml-12 mr-12 mt-6 flex flex-col justify-center rounded-md bg-gray-800">
@@ -41,23 +41,15 @@ function ProjectCard({ project, allProjects, setProjects, inviteLink }) {
                     <button title="Edit" className="text-blue-500 cursor-pointer" onClick={handleEdit}><Pencil className="h-4 w-4 mt-4 mr-6" /></button>
                 </div>
                 <div className="mt-4 pb-6 text-center">
-
                     <h1 className="text-2xl font-medium hover:underline capitalize">{project.title}</h1>
-
                     <p className="mt-4 truncate">{project.description}</p>
-                </div>
-                <div className="w-full px-4 mb-4">
-
                 </div>
                 <div className="flex justify-between w-full text-[18px] p-4">
                     <button className="font-medium bg-cyan-900 p-2 rounded-md cursor-pointer">
                         Add Member
                     </button>
-
                     <button title="Delete" className="text-red-500 flex gap-1 items-center cursor-pointer" onClick={() => setDeleteProjectInfo(true)}>Delete<Trash2 className="h-4 w-4" /></button>
                 </div>
-
-
             </div>
         </div>
     )

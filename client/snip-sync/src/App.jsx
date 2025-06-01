@@ -13,6 +13,7 @@ import ManageSnip from "./pages/ManageSnips";
 import CreateFiles from "./pages/CreateFiles";
 import OpenFile from "./pages/OpenFile";
 import Teams from "./pages/Teams";
+import StoreSnips from "./pages/StoreSnips";
 function App() {
   return (
     <BrowserRouter>
@@ -31,6 +32,7 @@ function App() {
         <Route path="/files/:folderId" element={<CreateFiles />}></Route>
         <Route path="/openfile" element={<OpenFile />}></Route>
         <Route path="/teams" element={<Teams/>}></Route>
+       <Route path="/storesnips/:projectId" element={<StoreSnips />} />
       </Routes>
     </BrowserRouter>
   );
