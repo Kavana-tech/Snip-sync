@@ -8,7 +8,7 @@ import { Folders, Home, LayoutDashboard, LogOut, Settings, User, Users } from "l
 function Sidebar() {
   const navigate = useNavigate();
 
-  
+
   const handleLogout = async () => {
     try {
       let response = await axios.get('http://localhost:8000/logout', {
@@ -22,7 +22,7 @@ function Sidebar() {
     }
   }
   return (
-    <div className="w-64 bg-gray-800 text-white pt-4 min-h-screen shadow-lg">
+    <div className="w-64 bg-gray-800 text-white pt-4 min-h-screen shadow-lg fixed left-0 top-0 h-screen z-40">
       <Link to={'/'}><img src={logo} className="h-16" /></Link>
       <ul className="mt-8 flex flex-col gap-10 text-[17px]">
         <li><Link to={'/'} className="block py-2 px-6 hover:bg-gray-700 hover:text-cyan-400"><div className="flex"><Home className="mr-4" />Home</div></Link></li>

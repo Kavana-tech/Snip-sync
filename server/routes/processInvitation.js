@@ -1,5 +1,3 @@
-
-
 const express = require('express');
 const invite = require('../models/inviteModel');
 const router = express.Router();
@@ -13,7 +11,7 @@ router.post('/processinvite', async (req, res) => {
     const userToken = req.cookies.token;
 
     if (!userToken) {
-        return res.json({ redirectTo: 'login' });
+        return res.status(401).json({ redirectTo: 'login' });
     }
 
     try {

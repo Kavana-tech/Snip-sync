@@ -133,7 +133,7 @@ useEffect(() => {
     return (
         <div>
             <Toaster toastOptions={{duration:500, style: { background: '#1F2937', color: 'white' } }} />
-            <div className="flex">
+            <div className="flex ml-64">
                 <Sidebar />
                 <div className="min-h-screen bg-gray-900 text-white w-full">
                     <div className="flex px-4 py-2 justify-between bg-black/30">

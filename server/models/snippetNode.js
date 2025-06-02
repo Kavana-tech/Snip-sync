@@ -8,11 +8,11 @@ const snippetNodeSchema = new mongoose.Schema({
     },
     snippetName: {
         type: String,
-        required: true,
+       // required: true,
     },
     content: {
         type: String,
-        required: true
+        //required: true
     },
     parentId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -37,7 +37,7 @@ const snippetNodeSchema = new mongoose.Schema({
     },
     description:{
         type: String,
-        required: true
+        //required: true
     }
 });
 

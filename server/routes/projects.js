@@ -12,10 +12,10 @@ router.post('/addproject', authentication, async(req, res) => {
         const userEmail = req.user.email;
         const foundUser = await user.findOne({email: userEmail})
         if(workingAs === 'team')
-            newProject = new project({title, description, workingAs, createdBy: foundUser.username, inviteToken, teamMembers});
+            newProject = new project({title, description, workingAs, createdBy: foundUser.username,creatorEmail:userEmail, inviteToken, teamMembers});
         else
         {
-            newProject = new project({title, description, workingAs, createdBy: foundUser.username});
+            newProject = new project({title, description, workingAs, createdBy: foundUser.username, creatorEmail:userEmail,});
         }
         const createdProject = await newProject.save();
         res.status(200).json({message: "Project added successfully!", project: createdProject});

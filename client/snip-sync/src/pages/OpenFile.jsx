@@ -5,17 +5,20 @@ import { Copy, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, Toaster } from 'react-hot-toast';
-import { diffWords } from 'diff';
+import { diffLines } from 'diff';
 import { socket } from "../socket";
 import TagSelectField from "../components/TagSelectField";
 const renderDiff = (oldText, newText) => {
-    const diff = diffWords(oldText || "", newText || "");
+    const diff = diffLines(oldText || "", newText || "");
     return diff.map((part, index) => {
         const style = {
             backgroundColor: part.added ? '#064e3b' : part.removed ? '#7f1d1d' : 'transparent',
             color: part.added || part.removed ? 'white' : 'inherit',
-            padding: '0 2px',
+            padding: '4px 2px',
+            margin: '0 0 6px 0',
             borderRadius: '2px',
+            display: 'block', // Each diff part as a block for line-by-line
+            whiteSpace: 'pre-wrap'
         };
         return (
             <span key={index} style={style}>
@@ -122,7 +125,7 @@ const OpenFile = () => {
             toast.success("Snippet added successfully!");
             setSnippetContent("");
             setParentId(null);
-            setTag('');
+            setTag([]);
             setSnippetName('');
             setDescription('');
             setCreateCard(false);
@@ -142,7 +145,9 @@ const OpenFile = () => {
     const handleFork = (id) => {
         setParentId(id);
         setCreateCard(true);
-        getParentName(id)
+        getParentName(id);
+        const parentSnippet = snippets.find(s => s._id === id);
+        setSnippetContent(parentSnippet.content || '');
         window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
     }
 
@@ -200,7 +205,7 @@ const OpenFile = () => {
                         <div className="flex items-center text-white gap-2">
                             <span className="font-semibold">Filter</span>
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L15 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 019 21v-7.586L3.293 6.707A1 1 0 013 6V4z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L15 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 009 21v-7.586L3.293 6.707A1 1 0 013 6V4z" />
                             </svg>
                         </div>
                         <select
@@ -271,7 +276,7 @@ const OpenFile = () => {
                                             </div>
                                         </div>
 
-                                        <pre className="whitespace-pre-wrap bg-black p-2 mt-2 rounded-md">
+                                        <pre className="whitespace-pre-wrap bg-black p-6 mt-2 rounded-md">
                                             {snippet.parentId && parentSnippet
                                                 ? renderDiff(parentSnippet.content, snippet.content)
                                                 : snippet.content}
@@ -317,7 +322,7 @@ const OpenFile = () => {
                                     </div>
 
                                     <textarea
-                                        placeholder="Enter your Snippet"
+                                        placeholder="Enter your Snippet" rows="7"
                                         className="border-2 border-gray-700 w-full p-2 rounded-md"
                                         value={snippetContent}
                                         onChange={(e) => setSnippetContent(e.target.value)}

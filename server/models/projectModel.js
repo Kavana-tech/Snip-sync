@@ -22,6 +22,10 @@ const projectSchema = new mongoose.Schema({
     inviteToken: {
         type: String
     },
+    creatorEmail: {
+        type: String,
+        required: true
+    },
     pendingDeleteFolders: [{
         folderId: { type: mongoose.Schema.Types.ObjectId, ref: 'folder' },
         requestedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },

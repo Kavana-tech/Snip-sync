@@ -90,7 +90,7 @@ function InvitationRedirect() {
 
     useEffect(() => {
          if (hasRunRef.current) return;
-    hasRunRef.current = true;
+            hasRunRef.current = true;
         const processInvitation = async () => {
             try {
                 const response = await axios.post(
@@ -101,7 +101,6 @@ function InvitationRedirect() {
 
                 if (response.data.redirectTo === 'login') {
                     navigate(`/login?next=/invite?token=${token}`);
-                    // navigate('/dashboard');
                 } else if (response.data.redirectTo === 'dashboard') {
                     toast.success("Successfully joined the project!");
                     navigate('/dashboard');
@@ -109,8 +108,12 @@ function InvitationRedirect() {
                     toast.error(response.data.message);
                 }
             } catch (err) {
-                console.error(err);
-                toast.error("Error processing invite.");
+                if (err.response && err.response.status === 401) {
+                    navigate(`/login?next=/invite?token=${token}`);
+                } else {
+                    console.error(err);
+                    toast.error("Error processing invite.");
+                }
             }
         };
 
