@@ -1,7 +1,11 @@
 const express = require('express');
 const project = require('../models/projectModel');
 const router = express.Router();
+<<<<<<< HEAD
 
+=======
+const Project = require('../models/projectModel'); 
+>>>>>>> remotes/origin/features/teams-section
 
 // Get all projects (with teams)
 router.get('/api/projects', async (req, res) => {

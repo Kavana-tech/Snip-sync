@@ -23,7 +23,13 @@ function DashProjectCard({ project }) {
                     <p className="mt-4">{project.description}</p>
                 </div>
                 <div className="flex flex-col gap-4">
-                    <button title="Add your resusable codes" className="bg-gray-700 md:w-80 w-48 text-xl font-medium p-4 cursor-pointer rounded-sm hover:text-cyan-600 hover:scale-105 transition-transform duration-150"><Link>Reusable Codes</Link></button>
+                    <button
+                        title="Add your resusable codes"
+                        className="bg-gray-700 md:w-80 w-48 text-xl font-medium p-4 cursor-pointer rounded-sm hover:text-cyan-600 hover:scale-105 transition-transform duration-150"
+                        onClick={() => navigate(`/storesnips/${project._id}`)}
+                    >
+                        Reusable Codes
+                    </button>
                     <button title="Add your codes for version control" className="bg-gray-700 md:w-80 w-48 text-xl font-medium p-4 cursor-pointer rounded-sm hover:text-cyan-600 hover:scale-105 transition-transform duration-150"><Link to={`/managesnips/${project._id}`}>Manage Snips</Link></button>
                 </div>
                 <div className="w-full bg-gray-700 text-gray-400 mt-4 p-4 rounded-sm">
