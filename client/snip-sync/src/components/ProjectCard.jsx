@@ -2,34 +2,18 @@ import { Pencil, Trash2 } from "lucide-react";
 import React, { useState } from "react";
 import EditProject from "./EditProject";
 import DeleteProject from "./DeleteProject";
-import axios from "axios";
 import { toast, Toaster } from 'react-hot-toast'
 
 
 function ProjectCard({ project, allProjects, setProjects, inviteLink }) {
     const [editProjectInfo, setEditProjectInfo] = useState(false);
     const [deleteProjectInfo, setDeleteProjectInfo] = useState(false);
-    const [newLink, setNewLink] = useState('');
-    const [inviteCard, setInviteCard] = useState(false);
     const handleEdit = () => {
         setEditProjectInfo(true);
     }
     const handleClose = () => {
         setEditProjectInfo(false);
         setDeleteProjectInfo(false);
-    }
-
-    const handleAddMember = () => {
-        // try {
-        //     let res = axios.get(`http://localhost:8000/addmember/${project._id}`, { withCredentials: true });
-        //     let link = `http://localhost:5173/invite/${res.data.inviteToken}`;
-        //     setNewLink(link);
-        //     setInviteCard(true);
-        // }
-        // catch (error) {
-        //     console.log(error);
-        //     toast.error(error.response.data.message || 'Error while adding member')
-        // }
     }
 
     return (
@@ -65,10 +49,10 @@ function ProjectCard({ project, allProjects, setProjects, inviteLink }) {
 
                         <p className="mt-4 truncate">{project.description}</p>
                     </div>
-                    <div className="flex justify-between w-full text-[18px] p-4">
-                        <button className="font-medium bg-cyan-900 p-2 rounded-md cursor-pointer" onClick={handleAddMember}>
+                    <div className="flex w-full text-[18px] p-4 justify-end">
+                        {/* <button className="font-medium bg-cyan-900 p-2 rounded-md cursor-pointer" onClick={handleAddMember}>
                             Add Member
-                        </button>
+                        </button> */}
 
                         <button title="Delete" className="text-red-500 flex gap-1 items-center cursor-pointer" onClick={() => setDeleteProjectInfo(true)}>Delete<Trash2 className="h-4 w-4" /></button>
                     </div>

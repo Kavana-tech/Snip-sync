@@ -28,7 +28,7 @@ function Settings() {
   };
 
   return (
-    <div className="flex">
+    <div className="flex ml-64">
       <Sidebar />
       <div className="p-6 w-full min-h-screen bg-gray-900 text-white">
         <h2 className="text-3xl font-bold mb-6">Settings</h2>

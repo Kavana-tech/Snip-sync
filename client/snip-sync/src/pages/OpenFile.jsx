@@ -193,12 +193,11 @@ const OpenFile = () => {
     return (
         <div>
             <Toaster toastOptions={{ style: { background: '#1F2937', color: 'white' } }} />
-            <div className="flex">
+            <div className="flex ml-64">
                 <Sidebar />
                 <div className="min-h-screen bg-gray-900 text-white w-full">
                     <div className="w-full bg-black/30 mb-4 flex justify-between px-4 py-2">
                         <h1 className="text-2xl font-semibold p-4">{file.fileName}</h1>
-                        <button className="bg-cyan-900 text-xl font-medium px-4 py-0 mt-2 rounded-sm cursor-pointer">Visualize</button>
                     </div>
 
                     <div className="w-full bg-black/30 mb-4 px-4 py-2  items-center gap-4 flex justify-between">
@@ -311,7 +310,7 @@ const OpenFile = () => {
                         }}
                     >
                         {createCard && (
-                            <div className="w-full m-4">
+                            <div className="w-full ml-10">
                                 <div className="flex flex-col">
                                     <div className="flex mb-4 gap-4">
                                         <input type="text" value={snippetName} placeholder="Enter the Name of Your Snippet" onChange={(e) => setSnippetName(e.target.value)} className="border-2 mt-2 border-gray-700 max-w-[300px] w-full p-2 rounded-md" />

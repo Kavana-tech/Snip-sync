@@ -81,7 +81,7 @@ function Profile() {
   };
 
   return (
-    <div className='flex'>
+    <div className='flex ml-64'>
       <Sidebar />
       <div className="p-6 bg-gray-900 min-h-screen w-full text-white">
         <h2 className="text-3xl font-bold mb-6">Profile</h2>

@@ -99,7 +99,7 @@ function ManageSnips() {
     return (
         <div>
             <Toaster toastOptions={{ duration: 500, style: { background: '#1F2937', color: 'white' } }} />
-            <div className="flex">
+            <div className="flex ml-64">
                 <Sidebar />
                 <div className="min-h-screen bg-gray-900 text-white w-full">
                     <div className="w-full bg-black/30 mb-4 flex justify-between px-4 py-2">

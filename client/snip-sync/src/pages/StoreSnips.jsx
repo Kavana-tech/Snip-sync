@@ -1,4 +1,4 @@
-import { Trash2 } from "lucide-react";
+import { Copy, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import axios from "axios";
@@ -8,11 +8,14 @@ import { toast, Toaster } from 'react-hot-toast';
 function StoreSnips() {
     const { projectId } = useParams();
     const [snips, setSnips] = useState([]);
+    const [showAddForm, setShowAddForm] = useState(false);
+    const [newTitle, setNewTitle] = useState('');
+    const [newCode, setNewCode] = useState('');
 
     useEffect(() => {
         const fetchSnips = async () => {
             try {
-                const url = `http://localhost:8000/getsavedreusable/${projectId}`;
+                const url = `http://localhost:8000/getresuablesnippets/${projectId}`;
                 const response = await axios.get(url);
                 setSnips(response.data.snips || []);
             } catch (error) {
@@ -35,14 +38,46 @@ function StoreSnips() {
         }
     };
 
+    const handleAddResuableSnippets = async (e) => {
+        e.preventDefault();
+        if (!newTitle || !newCode) {
+            toast.error("Please fill in both fields");
+            return;
+        }
+        try {
+            const response = await axios.post("http://localhost:8000/addresuablesnippet", {
+                projectId,
+                title: newTitle,
+                code: newCode
+            });
+            if (response.status === 201) {
+                setSnips(prev => [response.data.snippet, ...prev]);
+                toast.success("Snippet added!");
+                setShowAddForm(false);
+                setNewTitle('');
+                setNewCode('');
+            }
+        } catch (error) {
+            console.error("Error adding snippet:", error);
+            toast.error(error.response?.data?.message || "Failed to add snippet");
+        }
+    };
+
+    const handleCopy = (code) => {
+    navigator.clipboard.writeText(code)
+        .then(() => toast.success("Copied to clipboard!"))
+        .catch(() => toast.error("Failed to copy!"));
+};
+
     return (
         <div>
             <Toaster toastOptions={{ style: { background: '#1F2937', color: 'white' } }} />
-            <div className="flex">
+            <div className="flex ml-64">
                 <Sidebar />
-                <div className="min-h-screen bg-gray-900 text-white w-full">
+                <div className="min-h-screen bg-gray-900 text-white w-full flex flex-col relative">
                     <div className="w-full bg-black/30 mb-4 flex justify-between px-4 py-2">
                         <h1 className="text-2xl font-semibold p-4"> Your Reusable Snips</h1>
+                        <button className="bg-cyan-900 px-4 py-2 rounded-md font-medium cursor-pointer" onClick={() => setShowAddForm(true)}>Add Snippet</button>
                     </div>
                     <div className="px-6 py-4">
                         {snips.length === 0 ? (
@@ -51,35 +86,76 @@ function StoreSnips() {
                             </div>
                         ) : (
                             <div className="bg-gray-800 rounded-lg shadow-lg">
-                                <div className="grid grid-cols-4 gap-4 text-gray-400 text-sm px-4 py-2 border-b border-gray-700 font-semibold">
-                                    <span>Title</span>
-                                    <span>Preview</span>
-                                    <span>Date Saved</span>
-                                    <span>Actions</span>
-                                </div>
                                 {snips.map((snip, index) => (
                                     <div
                                         key={index}
-                                        className="grid grid-cols-4 gap-4 items-center px-4 py-2 border-b border-gray-700 hover:bg-gray-700 transition-colors"
+
                                     >
-                                        <span className="text-white truncate">{snip.title}</span>
-                                        <span className="text-gray-400 truncate max-w-xs">{snip.code.slice(0, 60)}{snip.code.length > 60 ? "..." : ""}</span>
-                                        <span className="text-gray-400">
-                                            {new Date(snip.createdAt || Date.now()).toLocaleString()}
-                                        </span>
-                                        <span className="flex justify-end">
-                                            <Trash2
-                                                className="text-red-600 cursor-pointer"
-                                                onClick={() => handleDeleteSnip(snip._id)}
-                                            />
-                                        </span>
+                                        <div className="flex justify-between bg-gray-700 p-4">
+                                            <span className="text-white truncate">Title: {snip.title}</span>
+                                            <Copy onClick={() => handleCopy(snip.code)} className="cursor-pointer" />
+                                        </div>
+                                        <div className="bg-black p-4 m-2 rounded-2xl">
+                                            <span className="text-white">{snip.code}</span>
+                                        </div>
+                                        <div className="flex justify-between bg-gray-700 p-4">
+                                            <span className="text-gray-400">
+                                                {new Date(snip.createdAt || Date.now()).toLocaleString()}
+                                            </span>
+                                            <span >
+                                                <Trash2
+                                                    className="text-red-600 cursor-pointer"
+                                                    onClick={() => handleDeleteSnip(snip._id)}
+                                                />
+                                            </span>
+                                        </div>
+
                                     </div>
                                 ))}
                             </div>
                         )}
                     </div>
+                    {showAddForm && (
+                        <form
+                            className="bg-gray-800 p-4 rounded-t-lg flex flex-col gap-4 max-w-2xl w-full mx-auto mb-0"
+                            style={{ position: "sticky", bottom: 0, left: 0, right: 0 }}
+                            onSubmit={handleAddResuableSnippets}
+                        >
+                            <input
+                                type="text"
+                                placeholder="Snippet Title"
+                                className="p-2 rounded bg-gray-700 text-white outline-0"
+                                value={newTitle}
+                                onChange={e => setNewTitle(e.target.value)}
+                                required
+                            />
+                            <textarea
+                                placeholder="Your reusable code"
+                                className="p-2 rounded bg-gray-700 text-white outline-0 min-h-[80px]"
+                                value={newCode}
+                                onChange={e => setNewCode(e.target.value)}
+                                required
+                            />
+                            <div className="flex gap-2">
+                                <button
+                                    className="bg-cyan-900 px-4 py-2 rounded-md font-medium cursor-pointer"
+                                    type="submit"
+                                >
+                                    Add Snippet
+                                </button>
+                                <button
+                                    type="button"
+                                    className="bg-gray-600 px-4 py-2 rounded-md font-medium cursor-pointer"
+                                    onClick={() => setShowAddForm(false)}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    )}
                 </div>
             </div>
+
         </div>
     );
 }

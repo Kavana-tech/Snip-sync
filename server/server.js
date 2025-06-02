@@ -4,15 +4,15 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
-const {Server} = require('socket.io');
+const { Server } = require('socket.io');
 
 const http = require('http');
 const server = http.createServer(app);
 const io = new Server(server, {
-    cors: {
-        origin: 'http://localhost:5173',
-        methods: ['GET', 'POST', 'DELETE'],
-    },
+  cors: {
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST', 'DELETE'],
+  },
 })
 app.set('io', io);
 
@@ -35,16 +35,16 @@ io.on('connection', (socket) => {
 });
 
 app.use(cors({
-    origin: 'http://localhost:5173', 
-    credentials: true
+  origin: 'http://localhost:5173',
+  credentials: true
 }));
 
 app.use(express.json());
 app.use(cookieParser());
 
 mongoose.connect(process.env.MONGO_URL)
-    .then(() => console.log('Connected to MongoDB'))
-    .catch((err) => console.log('MongoDB connection error:', err));
+  .then(() => console.log('Connected to MongoDB'))
+  .catch((err) => console.log('MongoDB connection error:', err));
 
 const signup = require('./routes/signup');
 const logout = require('./routes/logout');
@@ -76,6 +76,9 @@ const findCreator = require('./routes/findCreator');
 const getParentName = require('./routes/getParentName');
 const addMember = require('./routes/addMember');
 const removeTeamMember = require('./routes/removeTeamMember');
+const addResuableSnippets = require('./routes/addResuableSnippets');
+const getReusableSnippets = require('./routes/getReusableSnippets');
+
 
 app.use('/', signup);
 app.use('/', logout);
@@ -100,19 +103,21 @@ app.use('/', getSnippets);
 app.use('/', deleteSnippet);
 app.use('/', deleteFile);
 app.use('/', approveDelete);
-app.use('/',fetchPendingDeleteFolders);
-app.use('/',rejectDeleteFolder);
+app.use('/', fetchPendingDeleteFolders);
+app.use('/', rejectDeleteFolder);
 app.use('/', findCreator);
 app.use('/', getParentName);
 app.use('/', addMember);
 app.use('/', removeTeamMember);
+app.use('/', addResuableSnippets);
+app.use('/', getReusableSnippets);
 
 // app.use('/', folderApproval);
 
 app.get('/', (req, res) => {
-    res.send("home page");
+  res.send("home page");
 });
 
 server.listen(8000, () => {
-    console.log("Server running on port 8000");
+  console.log("Server running on port 8000");
 });

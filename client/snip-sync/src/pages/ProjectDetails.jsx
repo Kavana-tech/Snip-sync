@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 function ProjectDetails() {
     const {projectId} = useParams();
     return (
-        <div className="flex">
+        <div className="flex ml-64">
             <Sidebar />
             <div className="min-h-screen bg-gray-900 text-white w-full">
                 <div className="w-full bg-black/30 mb-4 flex px-4 py-2">
