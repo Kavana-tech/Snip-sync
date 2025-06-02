@@ -8,7 +8,7 @@ function EditProject({ editProject, onClose, setProjects, invite }) {
     const [inviteBtn, setInviteBtn] = useState(true);
     const [errors, setErrors] = useState({});
     const [editCard, setEditCard] = useState(true);
-    const [inviteLink, setInviteLink] = useState(`http://localhost:5173/${editProject.inviteToken}`);
+    const [inviteLink, setInviteLink] = useState(`http://localhost:5173/invite?token=${editProject.inviteToken}`);
     const [projectData, setProjectData] = useState({
         title: editProject.title,
         description: editProject.description,

@@ -6,7 +6,7 @@ const authentication = require('../middleware/authentication');
 
 router.post('/approve-deletefolder/:projectId/:pendingDeleteId', authentication, async (req, res) => {
     const { projectId, pendingDeleteId } = req.params;
-    const userId = req.user.id;
+    //const userId = req.user.id;
 
     try {
         const io = req.app.get('io');
@@ -15,7 +15,7 @@ router.post('/approve-deletefolder/:projectId/:pendingDeleteId', authentication,
             return res.status(404).json({ message: "Project not found" });
         }
 
-        if (String(foundProject.createdBy) !== String(req.user.email)) {
+        if (String(foundProject.creatorEmail) !== String(req.user.email)) {
             return res.status(403).json({ message: "Only the creator can approve deletions" });
         }
 

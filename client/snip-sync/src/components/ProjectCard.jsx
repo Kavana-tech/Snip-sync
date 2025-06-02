@@ -20,16 +20,16 @@ function ProjectCard({ project, allProjects, setProjects, inviteLink }) {
     }
 
     const handleAddMember = () => {
-        try {
-            let res = axios.get(`http://localhost:8000/addmember/${project._id}`, { withCredentials: true });
-            let link = `http://localhost:8000/${res.data.inviteToken}`;
-            setNewLink(link);
-            setInviteCard(true);
-        }
-        catch (error) {
-            console.log(error);
-            toast.error(error.response.data.message || 'Error while adding member')
-        }
+        // try {
+        //     let res = axios.get(`http://localhost:8000/addmember/${project._id}`, { withCredentials: true });
+        //     let link = `http://localhost:5173/invite/${res.data.inviteToken}`;
+        //     setNewLink(link);
+        //     setInviteCard(true);
+        // }
+        // catch (error) {
+        //     console.log(error);
+        //     toast.error(error.response.data.message || 'Error while adding member')
+        // }
     }
 
     return (

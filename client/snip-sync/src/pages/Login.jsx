@@ -1,10 +1,11 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 
 function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [errors,setErrors] = useState({});
   const [formData, setFormData] = useState({ email: '', password: '' });
 
@@ -34,9 +35,13 @@ function Login() {
       console.log(response);
       if (response.data.isLogin) {
         toast.success(response.data.message);
-        setTimeout(()=>{
-          navigate('/dashboard');
-        }, 2000)
+        const params = new URLSearchParams(location.search);
+        const next = params.get('next');
+        if (next) {
+            navigate(next);
+        } else {
+            navigate('/dashboard');
+        }
       }
       else {
         toast.error(response.data.message);
