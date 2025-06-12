@@ -28,21 +28,22 @@ function Dashboard() {
     getProjects();
   }, [])
   return (
-    <div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-950">
       <Toaster toastOptions={{duration:500, style: { background: '#1F2937', color: 'white' }}} />
       <div className="flex ml-64">
         <Sidebar />
 
-        <div className="min-h-screen bg-gray-900 text-white w-full">
-          <div className="flex px-4 py-2 bg-black/30">
-            <h1 className="text-2xl font-semibold p-4">Currently Working On: </h1>
+        <div className="min-h-screen w-full px-8 py-8">
+          <div className="flex items-center gap-4 px-4 py-4 bg-black/40 rounded-xl shadow-lg mb-8">
+            <svg width="32" height="32" fill="none" viewBox="0 0 24 24" className="text-cyan-400">
+              <path d="M12 2L2 7l10 5 10-5-10-5zm0 7.5L2 7v10l10 5 10-5V7l-10 2.5z" fill="currentColor"/>
+            </svg>
+            <h1 className="text-3xl font-bold tracking-tight text-white drop-shadow">Your Projects</h1>
           </div>
           <FetchedProjects projects={projects} />
         </div>
       </div>
-
     </div>
-
   )
 }
 export default Dashboard;
