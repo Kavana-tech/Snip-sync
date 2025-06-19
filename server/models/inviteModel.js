@@ -14,9 +14,6 @@ const inviteSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    expiresAt: {
-        type: Date
-    }
 
 });
 

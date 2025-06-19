@@ -13,7 +13,7 @@ function Dashboard() {
     async function getProjects() {
       const toastId = toast.loading("Loading projects...", { position: "top-center", duration: Infinity });
       try {
-        let response = await axios.get("http://localhost:8000/fetchprojects", {
+        let response = await axios.get("http://localhost:8000/dashboard/fetchprojects", {
           withCredentials: true
         });
         setProjects(response.data.fetchedProjects);

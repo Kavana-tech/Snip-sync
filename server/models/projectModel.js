@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const folder = require('./folderModel');
 
 const projectSchema = new mongoose.Schema({
 
@@ -30,8 +31,15 @@ const projectSchema = new mongoose.Schema({
     },
     pendingDeleteFolders: [{
         folderId: { type: mongoose.Schema.Types.ObjectId, ref: 'folder' },
-        requestedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        folderName: { type: String },
+        requestedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
+        requester: {type: String},
         status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' }
+    }],
+    pendingJoinRequests: [{
+        email: { type: String, required: true },
+        username: { type: String },
+        requestedAt: { type: Date, default: Date.now }
     }],
     folders: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -41,7 +49,7 @@ const projectSchema = new mongoose.Schema({
         email: { type: String },
         username: { type: String }
     }]
-  })
+})
 
 const project = mongoose.model("project", projectSchema);
 module.exports = project;

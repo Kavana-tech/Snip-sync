@@ -8,7 +8,7 @@ const { encrypt, decrypt } = require('../utils/contentCrypto');
 require('dotenv').config();
 
 router.post('/addsnippet', authentication, async (req, res) => {
-    const { fileId, content, snippetName, parentId, tags, description, createdAt } = req.body;
+    const { fileId, content, snippetName, parentId, tags, description, createdAt, language } = req.body;
     const userToken = req.cookies.token;
     const decoded = jwt.verify(userToken, process.env.JWT_SECRET);
     const currentUser = await user.findOne({ email: decoded.email });
@@ -29,7 +29,8 @@ router.post('/addsnippet', authentication, async (req, res) => {
             createdAt,
             parentId: parentId || null,
             tags: tags || [],
-            author
+            author,
+            language
         });
 
         const savedSnippet = await newSnippet.save();

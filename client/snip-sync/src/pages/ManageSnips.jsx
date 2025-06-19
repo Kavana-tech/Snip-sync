@@ -7,7 +7,8 @@ import { toast, Toaster } from 'react-hot-toast';
 import CreateFolderCard from "../components/CreateFolderCard";
 import { useParams } from "react-router-dom";
 import { useRef } from "react";
-import ApproveFolderDelete from "../components/ApproveFolderDelete";
+import TeamBar from "../components/TeamBar";
+
 function ManageSnips() {
     const { projectId } = useParams();
     const [formCard, setFormCard] = useState(false);
@@ -17,38 +18,37 @@ function ManageSnips() {
         files: [],
     })
 
-    const [pendingDeletes, setPendingDeletes] = useState([]);
+    // const [pendingDeletes, setPendingDeletes] = useState([]);
     const fetched = useRef(false);
-    const [creator, setCreator] = useState('');
 
-    useEffect(() => {
-        async function findCreator(){
-            try {
-                const response = await axios.get(`http://localhost:8000/findcreator/${projectId}`, { withCredentials: true });
-                setCreator(response.data.creator);
-            } catch (error) {
-                console.error("Error fetching project creator:", error);
-                toast.error(error.response?.data?.message || "Failed to fetch project creator.");
-            }
-        }
-        findCreator();
-    }, [projectId]);
+    // useEffect(() => {
+    //     async function findCreator(){
+    //         try {
+    //             const response = await axios.get(`http://localhost:8000/findcreator/${projectId}`, { withCredentials: true });
+    //             setCreator(response.data.creator);
+    //         } catch (error) {
+    //             console.error("Error fetching project creator:", error);
+    //             toast.error(error.response?.data?.message || "Failed to fetch project creator.");
+    //         }
+    //     }
+    //     findCreator();
+    // }, [projectId]);
 
-    useEffect(() => {
-        if (fetched.current) return;
-        fetched.current = true;
-        async function fetchPendingDeletes() {
-            try {
-                const response = await axios.get(`http://localhost:8000/fetchpendingdeletefolders/${projectId}`, { withCredentials: true });
-                setPendingDeletes(response.data.pendingProjects);
-            }
-            catch (error) {
-                console.error("Error fetching pending delete folders:", error);
-                toast.error(error.response?.data?.message || "Failed to fetch pending delete folders.");
-            }
-        }
-        fetchPendingDeletes();
-    }, [projectId])
+    // useEffect(() => {
+    //     if (fetched.current) return;
+    //     fetched.current = true;
+    //     async function fetchPendingDeletes() {
+    //         try {
+    //             const response = await axios.get(`http://localhost:8000/fetchpendingdeletefolders/${projectId}`, { withCredentials: true });
+    //             setPendingDeletes(response.data.pendingProjects);
+    //         }
+    //         catch (error) {
+    //             console.error("Error fetching pending delete folders:", error);
+    //             toast.error(error.response?.data?.message || "Failed to fetch pending delete folders.");
+    //         }
+    //     }
+    //     fetchPendingDeletes();
+    // }, [projectId])
 
 
     const hasFetched = useRef(false);
@@ -56,7 +56,7 @@ function ManageSnips() {
         if (hasFetched.current) return
         hasFetched.current = true;
         async function getFolders() {
-            const toastId = toast.loading("Loading projects...", { position: "top-center", duration: Infinity });
+            const toastId = toast.loading("Loading folders...", { position: "top-center", duration: Infinity });
             try {
                 let response = await axios.get(`http://localhost:8000/getfolders/${projectId}`, {withCredentials: true});
                 console.log(response);
@@ -99,20 +99,23 @@ function ManageSnips() {
     return (
         <div>
             <Toaster toastOptions={{ duration: 500, style: { background: '#1F2937', color: 'white' } }} />
-            <div className="flex ml-64">
+            <div className="flex ml-64 mr-60">
                 <Sidebar />
-                <div className="min-h-screen bg-gray-900 text-white w-full">
-                    <div className="w-full bg-black/30 mb-4 flex justify-between px-4 py-2">
-                        <h1 className="text-2xl font-semibold p-4">Manage Your Snips</h1>
+                <div className="min-h-screen w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-950 text-white px-8 py-8">
+                    <div className="flex items-center justify-between px-6 py-4 bg-black/40 rounded-xl shadow-lg mb-8">
+                        <div className="flex gap-2 items-center">
+                            <svg width="32" height="32" fill="none" viewBox="0 0 24 24" className="text-cyan-400">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zm0 7.5L2 7v10l10 5 10-5V7l-10 2.5z" fill="currentColor" />
+                            </svg>
+                            <h1 className="text-3xl font-bold tracking-tight text-white drop-shadow">Your Folders</h1>
+                        </div>
                         <button type="button" className="bg-cyan-900 cursor-pointer px-4 py-2 text-xl font-semibold rounded-md" onClick={() => setFormCard(true)}>
                             <div className="flex justify-center items-center text-white">Create Folder <FolderPlus className="ml-2 font-semibold" /></div>
                         </button>
                     </div>
-                    {creator && (
-                        <ApproveFolderDelete pendingProjects={pendingDeletes} setPendingProjects={setPendingDeletes} projectId={projectId} />
-                    )}
 
                     <CreateFolderCard allFolders={allFolders} setFormCard={setFormCard} setAllFolders={setAllFolders} projectId={projectId} />
+                    <TeamBar projId={projectId}/>
 
                     <AnimatePresence>
                         {formCard &&

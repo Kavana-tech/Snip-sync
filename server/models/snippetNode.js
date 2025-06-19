@@ -38,6 +38,10 @@ const snippetNodeSchema = new mongoose.Schema({
     description:{
         type: String,
         //required: true
+    },
+    language:{
+        type: String,
+        //required: true
     }
 });
 

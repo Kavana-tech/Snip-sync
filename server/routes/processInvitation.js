@@ -4,6 +4,7 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const project = require('../models/projectModel');
 const User = require('../models/userModel');
+const notification = require('../models/notificationModel');
 require('dotenv').config();
 
 router.post('/processinvite', async (req, res) => {
@@ -19,26 +20,40 @@ router.post('/processinvite', async (req, res) => {
         const currentUser = await User.findOne({ email: decoded.email });
 
         const invitation = await invite.findOne({ token });
-        if (!invitation || (invitation.expiresAt && invitation.expiresAt < Date.now())) {
+        if (!invitation) {
             return res.status(410).json({ message: "Link Expired or Invalid" });
         }
 
         const projectDoc = await project.findOne({ inviteToken: token });
         if (!projectDoc) return res.status(404).json({ message: "Project not found" });
 
-        const alreadyInTeam = projectDoc.teamMembers.some(
-            m => m.email === currentUser.email
+        const alreadyRequested = projectDoc.pendingJoinRequests.some(
+            req => req.email === currentUser.email
         );
-
-        if (!alreadyInTeam) {
-            projectDoc.teamMembers.push({
+        if (!alreadyRequested) {
+            projectDoc.pendingJoinRequests.push({
                 email: currentUser.email,
                 username: currentUser.username
             });
             await projectDoc.save();
         }
 
-        res.json({ redirectTo: 'dashboard', projectId: projectDoc._id });
+        await notification.create({
+            user: currentUser._id,
+            message: "Your joining request has been sent successfully! Please wait for approval.",
+            read: false
+        });
+
+        const creatorUser = await User.findOne({ email: projectDoc.creatorEmail });
+        if (creatorUser) {
+            await notification.create({
+                user: creatorUser._id,
+                message: `${currentUser.username} has requested to join your project "${projectDoc.title}".`,
+                read: false
+            });
+        }
+
+        res.json({ redirectTo: 'request', notification: "Joining request sent successfully! Please wait for approval." });
 
     } catch (err) {
         console.error(err);

@@ -78,6 +78,9 @@ const addMember = require('./routes/addMember');
 const removeTeamMember = require('./routes/removeTeamMember');
 const addResuableSnippets = require('./routes/addResuableSnippets');
 const getReusableSnippets = require('./routes/getReusableSnippets');
+const getAProject = require("./routes/getAProject");
+const notification = require('./routes/notifications');
+const manageInvites = require('./routes/manageInvites')
 
 
 app.use('/', signup);
@@ -111,6 +114,9 @@ app.use('/', addMember);
 app.use('/', removeTeamMember);
 app.use('/', addResuableSnippets);
 app.use('/', getReusableSnippets);
+app.use('/', getAProject);
+app.use('/', notification);
+app.use('/', manageInvites);
 
 // app.use('/', folderApproval);
 

@@ -4,15 +4,19 @@ import Sidebar from "../components/Sidebar";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast, Toaster } from 'react-hot-toast';
 import { socket } from "../socket";
+import TeamBar from "../components/TeamBar";
 
 function CreateFiles() {
     const navigate = useNavigate();
+    const location = useLocation();
+    const projectId = location.state?.projectId;
     const { folderId } = useParams();
     const [files, setFiles] = useState([]);
     const [formCard, setFormCard] = useState(false);
+    
     const [fileData, setFileData] = useState({
         fileName: ''
     })
@@ -90,11 +94,17 @@ function CreateFiles() {
     return (
         <div>
             <Toaster toastOptions={{ style: { background: '#1F2937', color: 'white' } }} />
-            <div className="flex ml-64">
+            <div className="flex ml-64 mr-60">
                 <Sidebar />
-                <div className="min-h-screen bg-gray-900 text-white w-full">
-                    <div className="w-full bg-black/30 mb-4 flex justify-between px-4 py-2">
-                        <h1 className="text-2xl font-semibold p-4">Manage Your Snips</h1>
+                <TeamBar projId={projectId}/>
+                <div className="min-h-screen w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-950 text-white px-8 py-8">
+                    <div className="flex items-center justify-between px-6 py-4 bg-black/40 rounded-xl shadow-lg mb-8">
+                        <div className="flex gap-2 items-center">
+                            <svg width="32" height="32" fill="none" viewBox="0 0 24 24" className="text-cyan-400">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zm0 7.5L2 7v10l10 5 10-5V7l-10 2.5z" fill="currentColor" />
+                            </svg>
+                            <h1 className="text-3xl font-bold tracking-tight text-white drop-shadow">Manage Your Snips</h1>
+                        </div>
                         <button type="button" className="bg-cyan-900 cursor-pointer px-4 py-2 text-xl font-semibold rounded-md" onClick={() => setFormCard(true)}>
                             <div className="flex justify-center items-center text-white">Create File <FilePlus className="ml-2 font-semibold" /></div>
                         </button>
@@ -142,7 +152,7 @@ function CreateFiles() {
                                         key={index}
                                         className="grid grid-cols-4 gap-4 items-center px-4 py-2 border-b border-gray-700 hover:bg-gray-700 transition-colors cursor-pointer"
                                     >
-                                        <span className="text-white truncate hover:underline" onClick={() => navigate("/openfile", { state: { file } })}>{file.fileName}</span>
+                                        <span className="text-white truncate hover:underline" onClick={() => navigate("/openfile", { state: { file, projectId } })}>{file.fileName}</span>
                                         <span className="text-gray-400">
                                             {new Date(file.createdAt || Date.now()).toLocaleString()}
                                         </span>

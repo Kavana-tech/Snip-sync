@@ -22,8 +22,8 @@ function InvitationRedirect() {
 
                 if (response.data.redirectTo === 'login') {
                     navigate(`/login?next=/invite?token=${token}`);
-                } else if (response.data.redirectTo === 'dashboard') {
-                    toast.success("Successfully joined the project!");
+                } else if (response.data.redirectTo === 'request') {
+                    toast.success(response.data.notification);
                     navigate('/dashboard');
                 } else {
                     toast.error(response.data.message);
