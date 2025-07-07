@@ -5,6 +5,7 @@ const router = express.Router();
 const authentication = require('../middleware/authentication');
 const user = require('../models/userModel');
 const notification = require('../models/notificationModel');
+const snippetNode = require('../models/snippetNode');
 
 router.delete('/deletefolder/:projectId/:folderId', authentication, async (req, res) => {
     const { projectId, folderId } = req.params;
@@ -23,10 +24,16 @@ router.delete('/deletefolder/:projectId/:folderId', authentication, async (req, 
 
         const foundFolder = await folder.findById(folderId);
 
+         if (foundFolder && foundFolder.files && foundFolder.files.length > 0) {
+            for (const file of foundFolder.files) {
+                await snippetNode.deleteMany({ fileId: file._id });
+            }
+        }
 
         if (String(foundProject.createdBy) === String(foundUser.username)) {
             await folder.findByIdAndDelete(folderId);
             foundProject.folders = foundProject.folders.filter(fId => String(fId) !== String(folderId));
+
             await foundProject.save();
 
             for (const member of foundProject.teamMembers) {

@@ -31,7 +31,7 @@ function Admin() {
                         <AdminCard
                             title="Manage Team Members"
                             description="Add, remove, or update team members in projects."
-                            onClick={() => navigate("/teams")}
+                            onClick={() => navigate("/admin/manageteams")}
                         />
                         <AdminCard
                             title="Manage Projects"

@@ -17,6 +17,21 @@ router.get('/notification', authentication, async (req, res) => {
     }
 });
 
+router.delete('/deletenotification/:id', authentication, async (req, res) => {
+    try {
+        const notif = await notification.findOneAndDelete({
+            _id: req.params.id,
+            //user: req.user._id 
+        });
+        if (!notif) {
+            return res.status(404).json({ message: "Notification not found" });
+        }
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
 router.get('/notification/unread/count', authentication, async (req, res) => {
     try {
         const userDoc = await require('../models/userModel').findOne({ email: req.user.email });

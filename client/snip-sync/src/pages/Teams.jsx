@@ -1,149 +1,84 @@
-// Teams.jsx
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import Sidebar from '../components/Sidebar';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import Sidebar from "../components/Sidebar";
 
 function Teams() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showInviteCard, setShowInviteCard] = useState(false);
-  const [inviteLink, setInviteLink] = useState('');
 
   useEffect(() => {
-    axios
-      .get('http://localhost:8000/fetchprojects', { withCredentials: true })
-      .then((res) => {
+    const fetchTeams = async () => {
+      try {
+        const res = await axios.get("http://localhost:8000/fetchprojects", {withCredentials:true});
         setProjects(res.data.fetchedProjects || []);
+      } catch (err) {
+        setProjects([]);
+      } finally {
         setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      }
+    };
+    fetchTeams();
   }, []);
 
-  const handleInviteClick = async (inviteToken) => {
-    try {
-      // Fetch the project to get its stored inviteToken
-      const response = await axios.get(`http://localhost:8000/getproject?token=${inviteToken}`, { withCredentials: true });
-      const token = response.data.fetchedProject.inviteToken;
-      const link = `http://localhost:5173/invite?token=${token}`;
-      setInviteLink(link);
-      setShowInviteCard(true);
-    } catch (error) {
-      console.error(error);
-      // Optionally show a toast error
-    }
-  };
-  const handleRemoveMember = async (projectId, memberEmail) => {
-  try {
-    await axios.post('http://localhost:8000/removeteammember', {
-      projectId,
-      memberEmail
-    }, { withCredentials: true });
-
-    setProjects(prev =>
-      prev.map(project =>
-        project._id === projectId
-          ? { ...project, teamMembers: project.teamMembers.filter(m => m.email !== memberEmail) }
-          : project
-      )
-    );
-  } catch (error) {
-    console.error("Failed to remove member:", error);
-  }
-};
-
   return (
-    <div className='flex ml-64'>
-      <Sidebar />
-      <div className="p-8 bg-gray-900 min-h-screen w-full">
-        <h2 className="text-3xl font-bold mb-6 text-blue-300 text-center">Project Teams</h2>
-
-        {loading ? (
-          <div className="text-center text-blue-300 text-lg">Loading teams...</div>
-        ) : (
-          <div>
-            {projects.length === 0 ? (
-              <div className="col-span-2 text-center text-gray-500">
-                No teams found.
-              </div>
-            ) : (
-              projects.map((project, index) => (
-                <div key={project._id || index} className="bg-gray-700 p-6 text-white rounded-lg shadow-sm  hover:shadow-lg transition w-full mb-4">
-                  <h3 className="text-xl font-bold text-blue-300 mb-1">{project.title}</h3>
-                  <p className="font-semibold text-gray-300 mb-2 mt-2">
-                    <span className="font-semibold text-blue-300">Description:</span> {project.description || 'No description'}
-                  </p>
-                  <div className="mb-2">
-                    <span className="font-semibold text-blue-300">Working As:</span> {project.workingAs}
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-950">
+      <div className="flex ml-64">
+        <Sidebar />
+        <div className="min-h-screen w-full px-8 py-8">
+          <div className="flex items-center gap-4 px-4 py-4 bg-black/40 rounded-xl shadow-lg mb-8">
+            <svg width="32" height="32" fill="none" viewBox="0 0 24 24" className="text-cyan-400">
+              <path d="M12 2L2 7l10 5 10-5-10-5zm0 7.5L2 7v10l10 5 10-5V7l-10 2.5z" fill="currentColor" />
+            </svg>
+            <h1 className="text-3xl font-bold tracking-tight text-white drop-shadow">Teams Dashboard</h1>
+          </div>
+          {loading ? (
+            <div className="text-gray-400 text-center">Loading...</div>
+          ) : projects.length === 0 ? (
+            <div className="text-gray-400 text-center">No projects found.</div>
+          ) : (
+            <div className="flex flex-col items-center gap-8">
+              {projects.map((proj) => (
+                <div
+                  key={proj._id}
+                  className="bg-gray-950/30 rounded-xl text-white shadow-lg p-6 w-full"
+                >
+                  <div className="text-xl font-semibold text-blue-300 mb-2">{proj.title}</div>
+                  <div className="text-gray-300 mb-1">
+                    <span className="font-medium">Project ID:</span> {proj._id}
                   </div>
-                  <div className="mb-2">
-                    <span className="font-semibold text-blue-300">Created By:</span> {project.createdBy}
+                  <div className="text-gray-300 mb-4">
+                    <span className="font-medium">Creator:</span> {proj.creatorEmail}
                   </div>
-                  <div className="mb-2">
-                    <span className="font-semibold text-blue-300">Created At:</span> {new Date(project.createdAt).toLocaleString()}
-                  </div>
-                  <p className="text-white mb-2 font-medium">Team Members:</p>
-                  <ul className="flex flex-wrap gap-2 mb-4">
-                    {project.teamMembers && project.teamMembers.length > 0 ? (
-                      project.teamMembers.map((member, i) => (
+                  <div className="font-bold mb-2 text-gray-200">Team Members:</div>
+                  <ul>
+                    {proj.teamMembers && proj.teamMembers.length > 0 ? (
+                      proj.teamMembers.map((member, idx) => (
                         <li
-                          key={i}
-                          className="relative group bg-blue-100 text-blue-800 px-8 py-1 rounded-full text-sm font-semibold shadow-sm flex items-center"
+                          key={idx}
+                          className="flex items-center bg-gray-700 rounded-md px-4 py-2 mb-2"
                         >
-                          {member.username || member.email}
-                          <button
-                            className=" text-xl text-blue-500 hover:text-blue-700 opacity-0 font-bold group-hover:opacity-100 transition-opacity absolute right-2 top-0"
-                            style={{ background: "none", border: "none", cursor: "pointer" }}
-                            title="Remove member"
-                            onClick={() => handleRemoveMember(project._id, member.email)}
-                          >
-                            &times;
-                          </button>
+                          <span className="w-8 h-8 rounded-full bg-black/50 flex items-center justify-center text-blue-300 font-bold mr-3 text-lg">
+                            {member.username ? member.username[0].toUpperCase() : "?"}
+                          </span>
+                          <span>
+                            {member.username || "Unknown"}{" "}
+                            <span className="text-blue-300 text-sm">({member.email})</span>
+                          </span>
                         </li>
                       ))
                     ) : (
-                      <li className="text-gray-400 italic">No members yet</li>
+                      <li className="text-gray-400">No team members.</li>
                     )}
                   </ul>
-                  <div className="flex gap-4">
-                    <button className="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600" onClick={() => handleInviteClick(project.inviteToken)}>Invite</button>
-                  </div>
                 </div>
-              ))
-            )}
-          </div>
-        )}
-      </div>
-      {showInviteCard && (
-        <div className="fixed inset-0 bg-black/80 flex justify-center items-center z-50">
-          <form className="flex flex-col gap-4 bg-gray-900 py-10 px-14 rounded-lg max-w-md w-full">
-            <h1 className="text-2xl font-medium text-center mb-4">Invite your team members</h1>
-            <input
-              type="text"
-              value={inviteLink}
-              readOnly
-              className="p-2 rounded bg-gray-700 text-white outline-0 focus:ring-2 focus:ring-cyan-400 cursor-pointer"
-            />
-            <button
-              type="button"
-              className="bg-blue-500 hover:bg-blue-600 p-2 rounded font-semibold cursor-pointer"
-              onClick={() => {
-                navigator.clipboard.writeText(inviteLink);
-              }}
-            >
-              Copy Link
-            </button>
-            <button
-              type="button"
-              className="absolute top-4 right-4 text-white"
-              onClick={() => setShowInviteCard(false)}
-            >
-              Close
-            </button>
-          </form>
+              ))}
+            </div>
+          )}
         </div>
-      )}
-    </div>
-  );
+        </div>
+        </div>
+        );
+        
 }
 
-export default Teams;
+        export default Teams;

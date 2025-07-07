@@ -18,6 +18,7 @@ import Admin from "./pages/Admin";
 import ManageInvites from "./AdminPages/ManageInvites";
 import ManageDeletions from "./AdminPages/ManageDeletions";
 import Notification from "./pages/Notification";
+import ManageTeams from "./AdminPages/ManageTeam";
 function App() {
   return (
     <BrowserRouter>
@@ -35,7 +36,8 @@ function App() {
         <Route path="/managesnips/:projectId" element={<ManageSnip/>}></Route>
         <Route path="/files/:folderId" element={<CreateFiles />}></Route>
         <Route path="/openfile" element={<OpenFile />}></Route>
-        <Route path="/teams" element={<Teams/>}></Route>
+        <Route path="/teams" element={<Teams />}></Route>
+        <Route path="/admin/manageteams" element={<ManageTeams />}></Route>
         <Route path="/admin" element={<Admin />}></Route>
         <Route path="/admin/manageinvites" element={<ManageInvites />}></Route>
         <Route path="/admin/managedeletions" element={<ManageDeletions />}></Route>

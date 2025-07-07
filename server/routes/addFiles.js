@@ -25,7 +25,7 @@ router.post('/addfiles/:folderId', async (req, res) => {
         
         const rootSnippet = new snippetNode({
             fileId: newFile._id,
-            content: " ", 
+            content: "Start writing your code by Modifying this Root snippet.", 
             parentId: null,
             branch: 'main',
             // authorId: authorId || null

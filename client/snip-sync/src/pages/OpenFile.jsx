@@ -17,7 +17,7 @@ import TeamBar from "../components/TeamBar";
 const OpenFile = () => {
     //const navigate = useNavigate();
     const location = useLocation();
-    const file = location.state?.file|| {};
+    const file = location.state?.file || {};
     const projectId = location.state?.projectId;
     const [createCard, setCreateCard] = useState(false);
     const [snippetContent, setSnippetContent] = useState("");
@@ -183,7 +183,7 @@ const OpenFile = () => {
             <Toaster toastOptions={{ style: { background: '#1F2937', color: 'white' } }} />
             <div className="flex ml-64 mr-60">
                 <Sidebar />
-                <TeamBar projId={projectId}/>
+                <TeamBar projId={projectId} />
                 <div className="min-h-screen w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-950 text-white px-8 py-8">
                     <div className="flex items-center justify-between px-6 py-4 bg-black/40 rounded-xl shadow-lg mb-8">
                         <div className="flex gap-2 items-center">
@@ -237,7 +237,7 @@ const OpenFile = () => {
 
 
                     {filteredSnippets.length === 0 ? (
-                        <div className=" flex flex-col justify-between w-full bg-gradient-to-br from-gray-800 via-gray-900 to-gray-950 rounded-2xl shadow-2xl p-6 border border-gray-700 mb-6">
+                        <div className=" flex flex-col justify-between items-center w-full bg-gradient-to-br from-gray-800 via-gray-900 to-gray-950 rounded-2xl shadow-2xl p-6 border border-gray-700 mb-6">
                             <div className="border-2 border-dashed border-cyan-600 max-w-[400px] flex flex-col justify-center items-center h-[220px] w-full bg-gray-800 rounded-2xl shadow-lg">
                                 <p className="text-center text-gray-300">
                                     Add your Snippet and watch your code evolve with seamless version control!
@@ -264,8 +264,8 @@ const OpenFile = () => {
                                             <p className="text-lg font-semibold text-cyan-400">
                                                 {snippet.snippetName}
                                                 {snippet.parentId && parentSnippet
-                                                    ? ` (version ${versionNumber} of ${parentSnippet.snippetName})`
-                                                    : ''}
+                                                    ? ` (version ${versionNumber} of ${ parentSnippet.snippetName ? parentSnippet.snippetName : 'Root Node'})`
+                                                    : 'Root Node'}
                                             </p>
                                             <div className="flex gap-2">
                                                 <button title="Copy Current Code" onClick={() => handleCopySnippet(snippet.content)}>
@@ -357,7 +357,7 @@ const OpenFile = () => {
                                     exit={{ y: 100, opacity: 0 }}
                                     transition={{ duration: 0.3 }}
                                 >
-                                    <div className="flex flex-col bg-gradient-to-br from-gray-800 via-gray-900 to-gray-950 rounded-2xl shadow-2xl p-6 border border-cyan-700 max-w-3xl mx-auto">
+                                    <div className="flex flex-col bg-gradient-to-br from-gray-800 via-gray-900 to-gray-950 rounded-2xl shadow-2xl py-2 px-6 border border-cyan-700 max-w-3xl mx-auto mt-12 max-h-[95vh]">
                                         <div className="flex mb-4 gap-4">
                                             <input type="text" value={snippetName} placeholder="Enter the Name of Your Snippet" onChange={(e) => setSnippetName(e.target.value)} className="border-2 mt-2 border-gray-700 max-w-[300px] w-full p-2 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-400" />
                                             <input type="text" value={description} placeholder="Enter the description" onChange={(e) => setDescription(e.target.value)} className="border-2 mt-2 border-gray-700 w-full p-2 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-400" />
@@ -403,11 +403,11 @@ const OpenFile = () => {
                                             <button className="bg-gray-700 hover:bg-gray-600 p-2 mt-4 font-medium text-lg min-w-[180px] rounded-md text-white shadow transition"
                                                 onClick={() => setCreateCard(false)}>Cancel</button>
                                         </div>
-                                        {parentId && (
+                                        {parentId ? (
                                             <p className="text-white font-medium mt-2">
-                                                Creating a new version from parent : {parentName}
+                                                Creating a new version from parent : {parentName === null || parentName === "" ? "Root Node" : parentName}
                                             </p>
-                                        )}
+                                        ): '"Creating a new version from parent :"Root Node""'}
                                     </div>
                                 </motion.div>
                             </motion.div>
