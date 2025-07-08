@@ -84,6 +84,7 @@ router.delete('/deletefolder/:projectId/:folderId', authentication, async (req, 
             message: `Your request to delete a folder in "${foundFolder.folderName}" folder has been submitted for approval.`,
             read: false
         });
+        const io = req.app.get('io');
 
         res.status(200).json({ message: "Delete request submitted for approval" });
     } catch (error) {

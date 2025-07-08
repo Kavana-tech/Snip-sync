@@ -10,7 +10,7 @@ require('dotenv').config();
 router.post('/processinvite', async (req, res) => {
     const { token } = req.body;
     const userToken = req.cookies.token;
-
+    const io = req.app.get('io');
     if (!userToken) {
         return res.status(401).json({ redirectTo: 'login' });
     }
@@ -52,6 +52,7 @@ router.post('/processinvite', async (req, res) => {
                 read: false
             });
         }
+        io.emit("new-notification");
 
         res.json({ redirectTo: 'request', notification: "Joining request sent successfully! Please wait for approval." });
 

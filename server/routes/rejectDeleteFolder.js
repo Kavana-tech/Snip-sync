@@ -7,8 +7,9 @@ const notification = require('../models/notificationModel');
 
 router.post('/reject-deletefolder/:projectId/:pendingDeleteId', authentication, async (req, res) => {
     const { projectId, pendingDeleteId } = req.params;
+    const io = req.app.get('io');
     try {
-        //const io = req.app.get('io');
+        
         const foundProject = await project.findById(projectId);
         if (!foundProject) {
             return res.status(404).json({ message: "Project not found" });
@@ -33,7 +34,7 @@ router.post('/reject-deletefolder/:projectId/:pendingDeleteId', authentication, 
         }
         await foundProject.save();
         console.log(foundProject);
-
+        io.emit("new-notification");
         res.status(200).json({ message: "Delete request rejected" });
     } catch (error) {
         console.error("Error rejecting folder delete:", error);
