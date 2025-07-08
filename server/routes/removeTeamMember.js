@@ -7,6 +7,7 @@ const authentication = require('../middleware/authentication');
 
 router.post('/removeteammember',authentication, async (req, res) => {
     const { projectId, memberEmail } = req.body;
+    const io = req.app.get('io');
     const adminEmail = req.user.email;
     try {
         const foundProject = await project.findById(projectId);
@@ -49,7 +50,7 @@ router.post('/removeteammember',authentication, async (req, res) => {
                 read: false
             });
         }
-
+        io.emit("new-notification");
         res.json({ success: true, updatedProject });
     } catch (error) {
         res.status(500).json({ success: false, message: "Failed to remove team member" });
