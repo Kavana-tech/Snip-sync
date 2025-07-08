@@ -69,7 +69,7 @@ const getSnippets = require('./routes/snippets');
 const deleteSnippet = require('./routes/deleteSnippet');
 const deleteFile = require('./routes/deleteFile');
 // const folderApproval = require('./routes/folderApproval');
-const approveDelete = require('./routes/approveDelete');
+const approveDeleteFolder = require('./routes/approveDeleteFolder');
 const fetchPendingDeleteFolders = require('./routes/fetchPendingDeleteFolders');
 const rejectDeleteFolder = require('./routes/rejectDeleteFolder');
 const findCreator = require('./routes/findCreator');
@@ -80,7 +80,8 @@ const addResuableSnippets = require('./routes/addResuableSnippets');
 const getReusableSnippets = require('./routes/getReusableSnippets');
 const getAProject = require("./routes/getAProject");
 const notification = require('./routes/notifications');
-const manageInvites = require('./routes/manageInvites')
+const manageInvites = require('./routes/manageInvites');
+const deleteResuableSnip = require('./routes/deleteResuableSnip');
 
 
 app.use('/', signup);
@@ -105,7 +106,7 @@ app.use('/', addSnippet);
 app.use('/', getSnippets);
 app.use('/', deleteSnippet);
 app.use('/', deleteFile);
-app.use('/', approveDelete);
+app.use('/', approveDeleteFolder);
 app.use('/', fetchPendingDeleteFolders);
 app.use('/', rejectDeleteFolder);
 app.use('/', findCreator);
@@ -117,6 +118,7 @@ app.use('/', getReusableSnippets);
 app.use('/', getAProject);
 app.use('/', notification);
 app.use('/', manageInvites);
+app.use('/', deleteResuableSnip);
 
 // app.use('/', folderApproval);
 

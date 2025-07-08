@@ -42,35 +42,12 @@ export default function HomePage() {
             src={actionVideo}
             controls
             autoPlay
+            muted
             className="w-full h-full rounded-xl shadow-lg"
          />
         </div>
        </section>
 
-      {/* Snippet Preview Section 
-      <section className="bg-slate-800 py-16 px-6">
-        <div className="max-w-6xl mx-auto text-center">
-          <h3 className="text-3xl font-bold text-white mb-10">Preview Your Snippets</h3>
-          <div className="grid md:grid-cols-3 gap-6">
-            {[1, 2, 3].map((_, idx) => (
-              <div
-                key={idx}
-                className="bg-slate-900 rounded-xl p-4 text-left shadow-md border border-slate-700 overflow-hidden"
-              >
-                <h4 className="text-cyan-400 font-semibold text-lg mb-2">Snippet {idx + 1}</h4>
-                <pre className="bg-slate-950 p-3 rounded-md text-sm overflow-x-auto text-slate-300">
-{`function greet(name) {
-  return "Hello, " + name + "!";
-}`}
-                </pre>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-      */}
-
-      {/* Feature Highlights */}
       <section className="bg-slate-900 py-16 px-8">
         <div className="max-w-5xl mx-auto text-center">
           <h3 className="text-3xl font-bold mb-10 text-white">Why SnipSync?</h3>

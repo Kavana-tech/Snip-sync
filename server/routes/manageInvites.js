@@ -19,6 +19,7 @@ router.get('/admin/manageinvites', authentication, async (req, res) => {
 
 router.post('/admin/manageinvites/approve', authentication, async (req, res) => {
     const { projectId, email } = req.body;
+    const io = req.app.get('io');
     const adminEmail = req.user.email;
     try {
         const proj = await project.findById(projectId);
@@ -63,7 +64,7 @@ router.post('/admin/manageinvites/approve', authentication, async (req, res) => 
                 });
             }
         }
-
+        io.emit("new-notification");
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ message: "Server Error" });
@@ -72,6 +73,7 @@ router.post('/admin/manageinvites/approve', authentication, async (req, res) => 
 
 router.post('/admin/manageinvites/reject', authentication, async (req, res) => {
     const { projectId, email } = req.body;
+    const io = req.app.get('io');
     try {
         const proj = await project.findById(projectId);
         if (!proj) return res.status(404).json({ message: "Project not found" });
@@ -85,6 +87,7 @@ router.post('/admin/manageinvites/reject', authentication, async (req, res) => {
                 read: false
             });
         }
+        io.emit("new-notification");
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ message: "Server Error" });

@@ -1,9 +1,9 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { NavLink } from 'react-router-dom';
-import { Link, useNavigate } from 'react-router-dom';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/homepageLogo.png'
 import { Bell, Folders, Home, LayoutDashboard, LogOut, Settings, User, User2, Users } from "lucide-react";
+import { io } from "socket.io-client"; 
 
 function Sidebar() {
   const navigate = useNavigate();
@@ -19,6 +19,24 @@ function Sidebar() {
       }
     };
     fetchUnread();
+
+    const socket = io("http://localhost:8000", {
+      withCredentials: true,
+      transports: ['websocket'],
+    });
+
+    socket.on("connect", () => {
+
+    });
+
+    socket.on("new-notification", () => {
+      
+      fetchUnread();
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   const handleLogout = async () => {
