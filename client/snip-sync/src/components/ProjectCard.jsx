@@ -1,14 +1,16 @@
-import { Pencil, Trash2, UserPlus } from "lucide-react";
+import { Pencil, Trash2, UserPlus, X } from "lucide-react";
 import React, { useState } from "react";
 import EditProject from "./EditProject";
 import DeleteProject from "./DeleteProject";
 import { toast, Toaster } from 'react-hot-toast';
+import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
 
 function ProjectCard({ project, allProjects, setProjects, inviteLink }) {
     const [editProjectInfo, setEditProjectInfo] = useState(false);
     const [deleteProjectInfo, setDeleteProjectInfo] = useState(false);
-    const [newLink, setNewLink] = useState('');
-    const [inviteCard, setInviteCard] = useState(false);
+    const [showInviteCard, setShowInviteCard] = useState(false);
+    const [inviteUrl, setInviteUrl] = useState('');
 
     const handleEdit = () => setEditProjectInfo(true);
     const handleClose = () => {
@@ -16,9 +18,25 @@ function ProjectCard({ project, allProjects, setProjects, inviteLink }) {
         setDeleteProjectInfo(false);
     };
 
-    const handleAddMember = () => {
-        // Implement add member logic here if needed
-        toast("Add member feature coming soon!");
+    const handleAddMember = async () => {
+        try {
+            // Fetch the latest invite token for this project
+            const response = await axios.get(`http://localhost:8000/getproject?token=${project.inviteToken}`, { withCredentials: true });
+            const token = response.data.fetchedProject.inviteToken;
+            const link = `http://localhost:5173/invite?token=${token}`;
+            setInviteUrl(link);
+            setShowInviteCard(true);
+        } catch (error) {
+            toast.error("Failed to get invite link");
+        }
+    };
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText(inviteUrl).then(() => {
+            toast.success('Link Copied');
+        }).catch(() => {
+            toast.error("Can't copy");
+        });
     };
 
     return (
@@ -92,6 +110,39 @@ function ProjectCard({ project, allProjects, setProjects, inviteLink }) {
                     <span>Created by: {project.createdBy}</span>
                 </div>
             </div>
+            {/* Invite Card Modal */}
+            <AnimatePresence>
+                {showInviteCard && (
+                    <motion.div className="fixed inset-0 bg-black/80 flex justify-center items-center z-50"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        transition={{ duration: 0.3 }}>
+                        <motion.form className="flex flex-col gap-4 bg-gray-900 py-10 px-14 rounded-lg max-w-md w-full" initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.8 }}
+                            transition={{ duration: 0.3 }}>
+                            <div className='flex justify-between'>
+                                <h1 className="text-2xl font-medium text-center mb-4 text-cyan-300">Invite your team members</h1>
+                                <X onClick={() => setShowInviteCard(false)} className='text-white cursor-pointer'/>
+                            </div>
+                            <input
+                                type="text"
+                                value={inviteUrl}
+                                readOnly
+                                className="p-2 rounded bg-gray-700 text-white outline-0 focus:ring-2 focus:ring-cyan-400 cursor-pointer"
+                            />
+                            <button
+                                type="button"
+                                className="bg-blue-500 hover:bg-blue-600 p-2 rounded font-semibold cursor-pointer"
+                                onClick={handleCopy}
+                            >
+                                Copy Link
+                            </button>
+                        </motion.form>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }
