@@ -38,16 +38,6 @@ function Admin() {
                             description="Create, update, or delete projects and view details."
                             onClick={() => navigate("/myprojects")}
                         />
-                        <AdminCard
-                            title="View Activity Logs"
-                            description="Monitor recent activities and changes in the system."
-                            onClick={() => navigate("/")}
-                        />
-                        {/* <AdminCard
-                            title="System Settings"
-                            description="Configure application-wide settings and preferences."
-                            onClick={() => navigate("/")}
-                        /> */}
                     </div>
                 </div>
             </div>
