@@ -20,7 +20,7 @@ function ProjectCard({ project, allProjects, setProjects, inviteLink }) {
 
     const handleAddMember = async () => {
         try {
-            // Fetch the latest invite token for this project
+
             const response = await axios.get(`http://localhost:8000/getproject?token=${project.inviteToken}`, { withCredentials: true });
             const token = response.data.fetchedProject.inviteToken;
             const link = `http://localhost:5173/invite?token=${token}`;
@@ -95,17 +95,19 @@ function ProjectCard({ project, allProjects, setProjects, inviteLink }) {
                     <p className="text-gray-300 text-sm">{project.description}</p>
                 </div>
                 <div className="flex flex-col gap-3 mb-4">
-                    <button
-                        className="flex items-center justify-center gap-2 bg-cyan-700/80 hover:bg-cyan-600 text-white font-semibold py-2 rounded-lg shadow transition-all duration-150"
-                        onClick={handleAddMember}
-                        title="Add Member"
-                    >
-                        <UserPlus className="h-5 w-5" /> Add Member
-                    </button>
+                    {project.workingAs !== "solo" && (
+                        <button
+                            className="flex items-center justify-center gap-2 bg-cyan-700/80 hover:bg-cyan-600 text-white font-semibold py-2 rounded-lg shadow transition-all duration-150"
+                            onClick={handleAddMember}
+                            title="Add Member"
+                        >
+                            <UserPlus className="h-5 w-5" /> Add Member
+                        </button>
+                    )}
                 </div>
                 <div className="flex items-center gap-2 text-gray-400 text-xs bg-gray-800/80 rounded-lg px-3 py-2">
                     <svg width="18" height="18" fill="none" viewBox="0 0 24 24" className="text-cyan-400">
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor" />
                     </svg>
                     <span>Created by: {project.createdBy}</span>
                 </div>
@@ -124,7 +126,7 @@ function ProjectCard({ project, allProjects, setProjects, inviteLink }) {
                             transition={{ duration: 0.3 }}>
                             <div className='flex justify-between'>
                                 <h1 className="text-2xl font-medium text-center mb-4 text-cyan-300">Invite your team members</h1>
-                                <X onClick={() => setShowInviteCard(false)} className='text-white cursor-pointer'/>
+                                <X onClick={() => setShowInviteCard(false)} className='text-white cursor-pointer' />
                             </div>
                             <input
                                 type="text"

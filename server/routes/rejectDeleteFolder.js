@@ -26,14 +26,26 @@ router.post('/reject-deletefolder/:projectId/:pendingDeleteId', authentication, 
 
         const requesterUser = await user.findById(pendingDelete.requestedBy);
         if (requesterUser) {
-            await notification.create({
+            const notif = await notification.create({
                 user: requesterUser._id,
-                message: `Your request to delete "${pendingDelete.folderName}" folder in "${foundProject.title}" has been approved by the creator.`,
+                message: `Your request to delete "${pendingDelete.folderName}" folder in "${foundProject.title}" has been rejected by the creator.`,
                 read: false
             });
+            console.log("Notification created for requester:", notif);
         }
+
+        const creatorUser = await user.findOne({ email: foundProject.creatorEmail });
+        if (creatorUser) {
+            const creatorNotif = await notification.create({
+                user: creatorUser._id,
+                message: `You have rejected the request to delete "${pendingDelete.folderName}" folder in "${foundProject.title}".`,
+                read: false
+            });
+            console.log("Notification created for creator:", creatorNotif);
+        }
+
         await foundProject.save();
-        console.log(foundProject);
+        console.log("Emitting new-notification event");
         io.emit("new-notification");
         res.status(200).json({ message: "Delete request rejected" });
     } catch (error) {
