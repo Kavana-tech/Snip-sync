@@ -82,7 +82,7 @@ const getAProject = require("./routes/getAProject");
 const notification = require('./routes/notifications');
 const manageInvites = require('./routes/manageInvites');
 const deleteResuableSnip = require('./routes/deleteResuableSnip');
-
+const deleteSnippetApproval = require('./routes/approveSnippetDeletion');
 
 app.use('/', signup);
 app.use('/', logout);
@@ -119,6 +119,7 @@ app.use('/', getAProject);
 app.use('/', notification);
 app.use('/', manageInvites);
 app.use('/', deleteResuableSnip);
+app.use('/', deleteSnippetApproval);
 
 // app.use('/', folderApproval);
 

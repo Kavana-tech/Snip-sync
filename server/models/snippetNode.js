@@ -42,6 +42,11 @@ const snippetNodeSchema = new mongoose.Schema({
     language:{
         type: String,
         //required: true
+    },
+    deletionStatus: {
+        type: String,
+        enum: ['active', 'pending', 'approved', 'rejected'],
+        default: 'active'
     }
 });
 

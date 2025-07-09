@@ -69,6 +69,54 @@ function ManageDeletions() {
         }
     };
 
+    const handleApproveSnippet = async (projectId, pendingDeleteId) => {
+        try {
+            await axios.post(
+                `http://localhost:8000/approve-deletesnippet/${projectId}/${pendingDeleteId}`,
+                {},
+                { withCredentials: true }
+            );
+            setProjects(prev =>
+                prev.map(project =>
+                    project._id === projectId
+                        ? {
+                            ...project,
+                            pendingDeleteSnippets: project.pendingDeleteSnippets.filter(
+                                req => req._id !== pendingDeleteId
+                            )
+                        }
+                        : project
+                )
+            );
+        } catch (err) {
+            alert("Failed to approve snippet deletion.");
+        }
+    };
+
+    const handleRejectSnippet = async (projectId, pendingDeleteId) => {
+        try {
+            await axios.post(
+                `http://localhost:8000/reject-deletesnippet/${projectId}/${pendingDeleteId}`,
+                {},
+                { withCredentials: true }
+            );
+            setProjects(prev =>
+                prev.map(project =>
+                    project._id === projectId
+                        ? {
+                            ...project,
+                            pendingDeleteSnippets: project.pendingDeleteSnippets.filter(
+                                req => req._id !== pendingDeleteId
+                            )
+                        }
+                        : project
+                )
+            );
+        } catch (err) {
+            alert("Failed to reject snippet deletion.");
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-950">
             <div className="flex ml-64">
@@ -81,6 +129,7 @@ function ManageDeletions() {
                         <h1 className="text-3xl font-bold tracking-tight text-white drop-shadow">Manage Deletions</h1>
                     </div>
                     <div className="bg-gray-900 rounded-xl p-6 shadow-lg">
+                        {/* Folder Deletion Section */}
                         <h2 className="text-xl font-semibold text-cyan-400 mb-4">Pending Folder Deletion Requests</h2>
                         {loading ? (
                             <p className="text-gray-400">Loading...</p>
@@ -103,16 +152,65 @@ function ManageDeletions() {
                                                             <span className="ml-2 text-cyan-400">{req.folderName}</span>
                                                         </div>
                                                         <div>
-                                                            <button type="button" className="text-sm text-cyan-400 hover:scale-105 transition-transform cursor-pointer" title="Accept">
-                                                                <CheckCircle
-                                                                    size={30}
-                                                                    onClick={() => handleApprove(project._id, req._id)}
-                                                                />
+                                                            <button
+                                                                type="button"
+                                                                className="text-sm text-cyan-400 hover:scale-105 transition-transform cursor-pointer"
+                                                                title="Accept"
+                                                                onClick={() => handleApprove(project._id, req._id)}
+                                                            >
+                                                                <CheckCircle size={30} />
                                                             </button>
                                                             <button type="button" className="ml-8 text-sm text-white hover:scale-105 transition-transform cursor-pointer" title="Reject">
                                                                 <MinusCircle
                                                                     size={30}
                                                                     onClick={() => handleReject(project._id, req._id)}
+                                                                />
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+                            ))
+                        )}
+
+                        {/* Snippet Deletion Section */}
+                        <h2 className="text-xl font-semibold text-cyan-400 mb-4 mt-8">Pending Snippet Deletion Requests</h2>
+                        {loading ? (
+                            <p className="text-gray-400">Loading...</p>
+                        ) : projects.length === 0 ? (
+                            <p className="text-gray-400">No projects found.</p>
+                        ) : (
+                            projects.map(project => (
+                                <div key={project._id + "-snippets"} className="mb-8">
+                                    <h3 className="text-lg text-cyan-400 font-bold mb-2">{project.title || "Untitled Project"}</h3>
+                                    {(!project.pendingDeleteSnippets || project.pendingDeleteSnippets.length === 0) ? (
+                                        <p className="text-gray-400 ml-4">No pending snippet deletion requests.</p>
+                                    ) : (
+                                        <ul>
+                                            {project.pendingDeleteSnippets.map(req => (
+                                                <li key={req._id} className="mb-2 ml-4 p-2 bg-gray-800 rounded">
+                                                    <div className="flex justify-between items-center">
+                                                        <div>
+                                                            <span className="font-bold text-white">{req.requester || "Unknown"}</span>
+                                                            <span className="ml-2 text-gray-400">requested to delete snippet</span>
+                                                            <span className="ml-2 text-cyan-400">{req.snippetTitle}</span>
+                                                        </div>
+                                                        <div>
+                                                            <button
+                                                                type="button"
+                                                                className="text-sm text-cyan-400 hover:scale-105 transition-transform cursor-pointer"
+                                                                title="Accept"
+                                                                onClick={() => handleApproveSnippet(project._id, req._id)}
+                                                            >
+                                                                <CheckCircle size={30} />
+                                                            </button>
+                                                            <button type="button" className="ml-8 text-sm text-white hover:scale-105 transition-transform cursor-pointer" title="Reject">
+                                                                <MinusCircle
+                                                                    size={30}
+                                                                    onClick={() => handleRejectSnippet(project._id, req._id)}
                                                                 />
                                                             </button>
                                                         </div>
