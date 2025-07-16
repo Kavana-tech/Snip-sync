@@ -9,7 +9,6 @@ export default function HomePage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-white">
       {/* Navbar */}
       <nav className="flex justify-between items-center px-6 py-2 bg-slate-950 bg-opacity-60 backdrop-blur-md shadow-md">
-        {/* <h1 className="text-2xl font-bold text-cyan-400">SnipSync</h1> */}
         <Link to={'/'}><img src={logo} className='h-16'/></Link>
         <div className="flex items-center gap-4">
           <Link to="/login" className="text-white hover:bg-cyan-700 transition bg-cyan-600 px-6 py-2 rounded-sm text-xl font-medium"><div className='flex justify-center items-center'>Login<LogIn className='ml-2'/></div></Link>
